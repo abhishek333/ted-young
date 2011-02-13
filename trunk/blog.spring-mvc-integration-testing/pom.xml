@@ -8,7 +8,7 @@
 	<packaging>jar</packaging>
 
 	<name>blog.spring-mvc-integration-testing</name>
-	<url>http://tedyoung.me</url>
+	<url>http://tedyoung.me/2011/02/14/spring-mvc-integration-testing-controllers/</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
