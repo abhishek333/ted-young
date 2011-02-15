@@ -22,6 +22,6 @@ public class DecoratorController {
 		// Make the current date available to our templates.
 		// We can put anything else we want in here.
 		map.put("now", new Date());
-		return name;
+		return "decorator/" + name;
 	}
 }
