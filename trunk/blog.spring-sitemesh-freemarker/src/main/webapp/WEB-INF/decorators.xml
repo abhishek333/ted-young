@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE decorators PUBLIC "-//OpenSymphony//SiteMesh 1.5 Decorators//EN" "http://www.opensymphony.com/sitemesh/dtd/sitemesh_1_5_decorators.dtd">
+
+<decorators defaultdir="/decorator">
+	<decorator name="standard" page="standard.ftl">
+		<pattern>*.html</pattern>
+	</decorator>
+</decorators>
