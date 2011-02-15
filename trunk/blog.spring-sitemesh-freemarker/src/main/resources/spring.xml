@@ -19,26 +19,10 @@
 	<mvc:annotation-driven/>
 	<aop:aspectj-autoproxy/>
 	
-	<bean id='viewResolver' class='org.springframework.web.servlet.view.ContentNegotiatingViewResolver'>
-		<property name="mediaTypes">
-			<map>
-				<entry key="html" value="text/html"/>
-				<entry key="ftl" value="application/decorator"/>
-			</map>
-		</property>
-		<property name="viewResolvers">
-			<list>
-				<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver"
-					p:exposeSpringMacroHelpers='true'
-					p:prefix= "/view/" p:suffix=".ftl"/>
-					
-				<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver"
-					p:contentType='application/decorator'
-					p:exposeSpringMacroHelpers='true'
-					p:prefix= "/decorator/" p:suffix=".ftl"/>
-			</list>
-		</property>
-	</bean>
+	<bean id='viewResolver' class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver"
+		p:exposeSpringMacroHelpers='true'
+		p:prefix= "/view/" p:suffix=".ftl"/>
+	
 		
 	<!-- FreeMarker Configuration -->
 	
