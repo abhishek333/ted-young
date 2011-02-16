@@ -17,6 +17,7 @@
 		<aspectj.version>1.6.8</aspectj.version>
 	</properties>
 
+	<url>http://tedyoung.me/2011/02/14/spring-sitemesh-and-freemarker/</url>
 	<organization>
 		<name>Ted Young</name>
 		<url>http://tedyoung.me</url>
