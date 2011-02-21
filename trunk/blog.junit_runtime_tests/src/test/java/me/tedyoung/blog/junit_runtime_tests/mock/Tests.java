@@ -20,7 +20,7 @@ public class Tests {
 
 		// Test our code.
 		PaymentService service = new PaymentService(paymentProcessor);
-		service.charge(creditCard, new BigDecimal("15.00"));
+		service.charge(creditCard, new BigDecimal("10.00"));
 	}
 
 }	

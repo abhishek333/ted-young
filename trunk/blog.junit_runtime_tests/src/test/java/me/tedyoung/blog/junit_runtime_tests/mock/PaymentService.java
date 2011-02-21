@@ -18,6 +18,6 @@ public class PaymentService {
 	}
 
 	public void charge(CreditCard creditCard, BigDecimal amount) {
-		 paymentProcessor.charge(creditCard, amount);
+		 paymentProcessor.charge(creditCard, amount.add(new BigDecimal("5")));
 	}
 }
