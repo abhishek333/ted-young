@@ -10,6 +10,7 @@ import com.googlecode.ehcache.annotations.Cacheable;
 public class ExpensiveServiceImpl implements ExpensiveService {
 	Logger log = LoggerFactory.getLogger(getClass());
 
+	@Override
 	@Cacheable(cacheName="cache")
 	public String expensiveLookup() {
 		log.info("Performing expensive lookup.");

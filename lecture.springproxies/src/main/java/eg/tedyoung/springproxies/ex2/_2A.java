@@ -18,6 +18,7 @@ public class _2A extends Example {
 	@Test
 	public void paymentProcessorSuccess() {
 		InvocationHandler handler = new InvocationHandler() {
+			@Override
 			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 				Assert.assertEquals("CCNUMBER", args[0]);
 				Assert.assertEquals(12345, args[1]);
@@ -36,6 +37,7 @@ public class _2A extends Example {
 	@Test
 	public void paymentProcessorFailure() {
 		InvocationHandler handler = new InvocationHandler() {
+			@Override
 			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 				Assert.assertEquals("CCNUMBER", args[0]);
 				Assert.assertEquals(12345, args[1]);
