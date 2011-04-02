@@ -48,9 +48,7 @@ public class SpELTests {
 		
 		for (int i = 0; i < 10; i ++) {
 			context.setVariable("value", i);
-		
 			int result = expression.getValue(context, Integer.class);
-		
 			Assert.assertEquals(i + 1, result);
 		}
 	}
