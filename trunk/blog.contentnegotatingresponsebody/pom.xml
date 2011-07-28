@@ -8,7 +8,7 @@
   <packaging>jar</packaging>
 
 	<name>blog.contentnegotatingresponsebody</name>
-	<url>http://tedyoung.me/2011/02/14/spring-mvc-integration-testing-controllers/</url>
+	<url>http://tedyoung.me/2011/07/28/spring-mvc-responsebody/</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
