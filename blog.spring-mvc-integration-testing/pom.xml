@@ -45,7 +45,6 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
-					<compilerId>eclipse</compilerId>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -82,7 +81,6 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
