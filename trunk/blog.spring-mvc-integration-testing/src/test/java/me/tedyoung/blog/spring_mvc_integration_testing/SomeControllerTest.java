@@ -21,7 +21,7 @@ import org.springframework.web.util.NestedServletException;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations="classpath:spring.xml", loader=MockWebApplicationContextLoader.class)
 @MockWebApplication(name="some-controller")
-public class SomeControllerTests {
+public class SomeControllerTest {
 	@Autowired
 	private DispatcherServlet servlet;
 	
