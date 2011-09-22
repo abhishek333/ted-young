@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	
+	<util:properties id="properties" location="/WEB-INF/config/app.properties"/>
+	<context:property-placeholder properties-ref="properties"/>
+	
+	<context:component-scan base-package="me.tedyoung.blog" />
+	
+	<mvc:annotation-driven conversion-service="conversionService"/>
+	<mvc:resources mapping="/static/**" location="/static/" />
+	
+	<jdbc:embedded-database id="dataSource" type="H2" />
+	
+	<jdbc:initialize-database data-source="dataSource">
+		<jdbc:script location="classpath:db/*.sql"/>
+	</jdbc:initialize-database>
+
+	<bean id="entityManager" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+		p:dataSource-ref="dataSource">
+		<property name="jpaProperties">
+			<map>
+				<entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+			</map>
+		</property>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+				p:showSql="false"
+				p:generateDdl="true"
+				p:database="H2"/>
+		</property>
+	</bean>	
+	
+	<tx:annotation-driven />
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+		p:entityManagerFactory-ref="entityManager"/>
+		
+	
+	<!-- 	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/*"/>
+			<bean class="me.tedyoung.blog.web.interceptor.AfterHoursInterceptor" p:redirect="/springmvc/static/afterHours.html"/>
+		</mvc:interceptor>
+	</mvc:interceptors>	
+	 -->	
+		
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+	
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"/>
+	
+	
+	
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+		p:defaultEncoding='UTF-8' p:cacheSeconds='1'
+		p:basenames="/WEB-INF/lang/messages"/>	
+		
+	<bean id="conversionService"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+	    <property name="converters">
+		   <list>
+			  <!-- <bean class="me.tedyoung.blog.support.StringTrimmerConverter"/>  -->
+		   </list>
+	    </property>
+	</bean>
+		
+		
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer"
+		p:configuration-ref="freemarkerConfiguration"/>	
+		
+	<bean id="freemarkerBeansWrapper" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
+		p:staticMethod='freemarker.ext.beans.BeansWrapper.getDefaultInstance'>
+	</bean>  
+	
+	<bean id="freemarkerConfiguration" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"
+		p:templateLoaderPath="/WEB-INF/">
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="tag_syntax">square_bracket</prop>
+				<prop key="auto_include">views/config.ftl</prop>
+				<prop key="output_encoding">UTF-8</prop>
+				<prop key="object_wrapper">freemarker.ext.beans.BeansWrapper</prop>
+				<prop key="date_format">MM/dd/yyyy</prop>
+				<prop key="time_format">hh:mm:ss a</prop>
+				<prop key="datetime_format">MM/dd/yyyy hh:mm:ss a</prop>
+				<prop key="number_format">computer</prop>
+			</props>
+		</property>
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="statics">
+					<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
+						p:targetObject-ref='freemarkerBeansWrapper' p:targetMethod='getStaticModels'>
+					</bean>  
+				</entry>
+				<entry key="enums">
+					<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
+						p:targetObject-ref='freemarkerBeansWrapper' p:targetMethod='getEnumModels'>
+					</bean>  
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id='viewResolver' class='org.springframework.web.servlet.view.ContentNegotiatingViewResolver'>
+		<property name="mediaTypes">
+			<map>
+				<entry key="atom" value="application/atom+xml"/>
+				<entry key="html" value="text/html;charset=UTF-8"/>
+				<entry key="xls" value="application/vnd.ms-excel"/>
+				<entry key="xml" value="application/xml"/>
+				<entry key="json" value="application/json"/>
+				<entry key="pdf" value="application/pdf"/>
+			</map>
+		</property>
+		<property name="viewResolvers">
+			<list>
+				<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver"
+					p:viewClass='me.tedyoung.blog.support.FixedFreeMarkerView'
+					p:contentType="text/html;charset=UTF-8"
+					p:exposeSpringMacroHelpers='true'
+					p:prefix= "/views/" p:suffix=".ftl"/>
+				<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver"
+					p:viewClass='me.tedyoung.blog.support.FixedFreeMarkerView'
+					p:contentType="application/vnd.ms-excel"
+					p:exposeSpringMacroHelpers='true'
+					p:prefix= "/views/" p:suffix=".ftl"/>
+				<bean class="me.tedyoung.blog.support.HTML2PDFViewResolver"
+					p:template='/WEB-INF/xsl/html.xsl'>
+					<property name="viewResolver">
+						<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver"
+							p:viewClass='me.tedyoung.blog.support.FixedFreeMarkerView'
+							p:exposeSpringMacroHelpers='true'
+							p:prefix= "/views/" p:suffix=".ftl"/>
+					</property>
+				</bean>
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+				<bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+					<property name='marshaller'>
+						<bean class='org.springframework.oxm.jaxb.Jaxb2Marshaller'
+							p:classesToBeBound='me.tedyoung.blog.Article'/>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

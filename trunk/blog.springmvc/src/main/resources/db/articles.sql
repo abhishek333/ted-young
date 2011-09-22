@@ -1,0 +1,2 @@
+insert into Article (title, content, imagePresent) values ('Test One', 'This is a test.', false);
+insert into Article (title, content, imagePresent) values ('Test Two', 'This is another test.', false);
