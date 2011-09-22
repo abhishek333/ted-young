@@ -14,6 +14,7 @@ public class ArticleRepository {
 	
 	public ArticleRepository() {
 	}
+
 	
 	@SuppressWarnings("unchecked")
 	public List<Article> find() {
