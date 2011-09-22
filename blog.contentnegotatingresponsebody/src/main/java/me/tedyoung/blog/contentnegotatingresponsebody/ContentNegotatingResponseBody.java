@@ -1,7 +1,9 @@
 package me.tedyoung.blog.contentnegotatingresponsebody;
 
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -149,6 +151,34 @@ public class ContentNegotatingResponseBody {
 				return acceptHeaders.elements();
 			else
 				return super.getHeaders(name);
+		}
+		
+		/**
+		 * {@inheritDoc}
+		 * @see javax.servlet.http.HttpServletRequestWrapper#getHeaderNames()
+		 */
+		@SuppressWarnings("unchecked")
+		@Override
+		public Enumeration<?> getHeaderNames() {
+			if(super.getHeaderNames() != null) {
+		        // Get all header names
+		        List<String> names = Collections.list(super.getHeaderNames());
+
+		        // Search for "accept" header
+		        boolean contains = false;
+		        for(String name: names)
+		            if(name.equalsIgnoreCase("accept"))
+		                contains = true;
+		        
+		        // Add Accept header name if does not exist
+		        if(!contains)
+		            names.add("Accept");
+		        
+		        return Collections.enumeration(names);
+		    }
+			else {
+				return super.getHeaderNames();
+			}
 		}
 	}
 
