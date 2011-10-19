@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
 @RequestMapping("authors/register")
@@ -53,6 +54,12 @@ public class AuthorRegistrationController {
 	@RequestMapping("review")
 	public String review(@ModelAttribute("registration") AuthorRegistrationForm registration) {
 		return "authors/register/review";
+	}
+	
+	@RequestMapping("submit")
+	public String submit (@ModelAttribute("registration") AuthorRegistrationForm registration, SessionStatus session) {
+		session.setComplete();
+		return "";
 	}
 	
 	@ExceptionHandler(HttpSessionRequiredException.class)
