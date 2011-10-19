@@ -23,9 +23,10 @@ public class SpringTest {
 	public void restTest() {
 		RestTemplate rest = new RestTemplate();
 		Article article = rest.getForObject(ARTICLE_URL, Article.class, 1);
-		article.setTitle("UPDATED");
 		
+		article.setTitle("UPDATED");
 		rest.put(ARTICLE_URL, article, 1);
+
 		article = rest.getForObject(ARTICLE_URL, Article.class, 1);
 		logger.log(Level.SEVERE, article.getTitle());
 		
