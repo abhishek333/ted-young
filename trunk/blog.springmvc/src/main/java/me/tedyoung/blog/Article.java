@@ -41,6 +41,7 @@ public class Article {
 	private boolean imagePresent;
 	
 	public Article() {
+		
 	}
 	
 	@Override

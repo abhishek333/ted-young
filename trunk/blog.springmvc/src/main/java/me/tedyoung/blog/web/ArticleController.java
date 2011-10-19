@@ -66,7 +66,6 @@ public class ArticleController {
 	
 	@RequestMapping(value="articles/{id}", method=RequestMethod.PUT)
 	@Transactional
-	//ARTICLE FORMs
 	public String update(@PathVariable long id, @ModelAttribute("article") Article article, BindingResult result) {
 		article.setId(id);
 		
@@ -87,7 +86,7 @@ public class ArticleController {
 	
 	@RequestMapping(value="articles", method=RequestMethod.POST)
 	@Transactional
-	public String insert(@ModelAttribute("article") @Valid Article article, BindingResult result, ModelMap model) {
+	public String insert(@Valid @ModelAttribute("article") Article article, BindingResult result, ModelMap model) {
 		if (result.hasErrors())
 			return "articles/form.update";
 		
