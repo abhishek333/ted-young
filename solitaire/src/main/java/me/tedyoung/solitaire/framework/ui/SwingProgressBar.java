@@ -136,7 +136,6 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 
 	public void stop() {
 		stopwatch.stop();
-		System.out.println(rate.getText());
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -150,9 +149,7 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				// bar.setMaximum(0);
 				bar.setMaximum(maximum);
-				// setValue(0);
 			}
 		});
 	}
