@@ -3,7 +3,6 @@ package me.tedyoung.solitaire.tester.group;
 import java.util.Collection;
 
 import me.tedyoung.solitaire.tester.Dependency;
-import me.tedyoung.solitaire.tester.SearchContext;
 
 public class Conjunction extends CompositeGroup {
 	public Conjunction() {
@@ -20,14 +19,6 @@ public class Conjunction extends CompositeGroup {
 
 	@Override
 	protected boolean defaultValue() {
-		return true;
-	}
-
-	@Override
-	protected boolean areDependenciesFreeOfCycle(SearchContext context) {
-		for (Dependency dependency : dependencies)
-			if (!dependency.isFreeOfCycle(context))
-				return false;
 		return true;
 	}
 

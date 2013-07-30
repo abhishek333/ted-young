@@ -74,7 +74,7 @@ public class MutableFoundation implements Foundation, Serializable {
 	public boolean containsCard(Card card) {
 		if (isEmpty(card.getSuit()))
 			return false;
-		return getTopCard(card.getSuit()).compareTo(card) >= 0;
+		return getTopCard(card.getSuit()).getDenomination().compareTo(card.getDenomination()) >= 0;
 	}
 
 	public List<Card> getCards() {

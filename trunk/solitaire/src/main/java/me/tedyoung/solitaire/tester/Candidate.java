@@ -4,7 +4,7 @@ import static me.tedyoung.solitaire.tester.group.Group.allOf;
 import static me.tedyoung.solitaire.tester.group.Group.anyOf;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,7 +13,7 @@ import me.tedyoung.solitaire.game.Denomination;
 import me.tedyoung.solitaire.game.MutableGame;
 import me.tedyoung.solitaire.game.MutableStack;
 
-public class Candidate extends Dependency implements Comparable<Candidate> {
+public class Candidate extends Dependency {
 	private static final DeckManager DECK_MANAGER = new DeckManager();
 
 	private final boolean revised;
@@ -250,7 +250,7 @@ public class Candidate extends Dependency implements Comparable<Candidate> {
 
 	@Override
 	public Set<Card> getCards() {
-		return Collections.singleton(card);
+		return EnumSet.of(card);
 	}
 
 	@Override
@@ -277,11 +277,6 @@ public class Candidate extends Dependency implements Comparable<Candidate> {
 		else if (!card.equals(other.card))
 			return false;
 		return true;
-	}
-
-	@Override
-	public int compareTo(Candidate that) {
-		return this.card.compareTo(that.card);
 	}
 
 	public Card getCard() {

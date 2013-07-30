@@ -1,13 +1,13 @@
 package me.tedyoung.solitaire.tester;
 
-import static me.tedyoung.solitaire.tester.group.Group.allOf;
-
-import java.util.HashSet;
+import java.util.EnumSet;
+import java.util.Set;
 
 import me.tedyoung.solitaire.framework.AbstractTester;
 import me.tedyoung.solitaire.game.Card;
 import me.tedyoung.solitaire.game.Game;
 import me.tedyoung.solitaire.game.MutableGame;
+import me.tedyoung.solitaire.tester.group.Group;
 import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
 public class DeadlockScanner extends AbstractTester {
@@ -40,20 +40,27 @@ public class DeadlockScanner extends AbstractTester {
 		for (Candidate candidate : candidates.values())
 			candidate.initializeDependencies();
 
-		HashSet<Card> dependants = new HashSet<>();
-		for (Candidate candidate : candidates.values())
-			dependants.addAll(candidate.getDependency().getCards());
+		if (revised) {
+			Set<Card> dependants = EnumSet.noneOf(Card.class);
+			for (Candidate candidate : candidates.values())
+				dependants.addAll(candidate.getDependency().getCards());
 
-		for (Card card : Card.getAll())
-			if (!dependants.contains(card))
-				candidates.remove(card);
+			return Group.allOf(candidates.getAll(dependants)).isFreeOfCycle(new SearchContext(getRunControl(), game, revised));
+			//
+			// SearchContext context = new SearchContext(getRunControl(), game, revised);
+			// for (MutableStack stack : game.getTable())
+			// for (Card card : stack.getAllCards())
+			// // if (dependants.contains(card))
+			// if (!candidates.get(card).isFreeOfCycle(context))
+			// return false;
+			//
+			// if (!candidates.get(game.getDeck().getAllCards().get(0)).isFreeOfCycle(context))
+			// return false;
+			//
+			// return true;
+		}
 
-		// game.print(System.out);
-		// candidates.dump();
-		if (revised)
-			return allOf(candidates.getAll(game.getTable().getAllCards())).and(candidates.get(game.getDeck().getAllCards().get(0))).isFreeOfCycle(new SearchContext(getRunControl(), game, revised));
-		else
-			return allOf(candidates.values()).isFreeOfCycle(new SearchContext(getRunControl(), game, revised));
+		return Group.allOf(candidates.values()).isFreeOfCycle(new SearchContext(getRunControl(), game, revised));
 	}
 
 	@Override

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import me.tedyoung.solitaire.DeadLockDetector;
 import me.tedyoung.solitaire.framework.Abort;
 import me.tedyoung.solitaire.framework.AbstractScoringPlayer;
 import me.tedyoung.solitaire.framework.ChainablePlayer;
@@ -99,10 +98,7 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 	}
 
 	private boolean isBlocked(MutableGame game) {
-		if (revised && useDeadlockDetection)
-			return !new DeadLockDetector().isSolvable(game);
-		else
-			return false;
+		return false;
 	}
 
 	@Override

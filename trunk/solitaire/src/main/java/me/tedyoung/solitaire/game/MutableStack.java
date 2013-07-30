@@ -11,7 +11,7 @@ import me.tedyoung.solitaire.game.errors.CardNotAvailableFromTopOfPileException;
 import me.tedyoung.solitaire.game.errors.CardNotFoundException;
 import me.tedyoung.solitaire.game.errors.InvalidCardPlayedToStackException;
 
-public class MutableStack implements Stack, Comparable<MutableStack>, Serializable {
+public class MutableStack implements Stack, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Pile cards;
@@ -160,18 +160,6 @@ public class MutableStack implements Stack, Comparable<MutableStack>, Serializab
 
 	Pile getPile() {
 		return cards;
-	}
-
-	@Override
-	public int compareTo(MutableStack that) {
-		if (this.isEmpty() && that.isEmpty())
-			return 0;
-		else if (this.isEmpty())
-			return -1;
-		else if (that.isEmpty())
-			return 1;
-		else
-			return this.cards.getAll().get(0).compareTo(that.cards.getAll().get(0));
 	}
 
 	@Override
