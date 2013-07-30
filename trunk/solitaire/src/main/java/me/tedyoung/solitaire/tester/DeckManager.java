@@ -33,7 +33,7 @@ public class DeckManager {
 		Candidate top = get(index + 2, cards, candidates);
 		Candidate middle = get(index + 1, cards, candidates);
 
-		if (revised && canMovementBeRestricted(top.getCard()) && top.getCard().isPeerOf(middle.getCard()) && cards.get(index).isHolderOf(top.getCard()))
+		if (canMovementBeRestricted(top.getCard()) && top.getCard().isPeerOf(middle.getCard()) && cards.get(index).isHolderOf(top.getCard()))
 			options.add(top.and(middle.restricted()));
 		else
 			options.add(top.and(middle));
@@ -62,7 +62,7 @@ public class DeckManager {
 			for (int j = i; j < index; j += 3)
 				alternatives.add(get(j + 1, cards, candidates));
 
-			if (revised && canMovementBeRestricted(top.getCard())) {
+			if (canMovementBeRestricted(top.getCard())) {
 				for (Iterator<Candidate> iterator = alternatives.iterator(); iterator.hasNext();) {
 					candidate = iterator.next();
 					if (top.getCard().isPeerOf(candidate.getCard()) && cards.get(index).isHolderOf(top.getCard())) {
