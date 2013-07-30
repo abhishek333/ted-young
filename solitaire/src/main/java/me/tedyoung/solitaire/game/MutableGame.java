@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 
 import me.tedyoung.solitaire.game.move.DeckToFoundationMove;
 import me.tedyoung.solitaire.game.move.DeckToStackMove;
@@ -32,7 +33,11 @@ public class MutableGame implements Game, Serializable {
 	}
 
 	public MutableGame(int handSize) {
-		deck = new MutableDeck(handSize);
+		this(handSize, new Random());
+	}
+
+	public MutableGame(int handSize, Random random) {
+		deck = new MutableDeck(handSize, random);
 		foundation = new MutableFoundation();
 		table = new MutableTable(deck);
 	}

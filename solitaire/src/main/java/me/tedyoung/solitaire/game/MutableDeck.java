@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import me.tedyoung.solitaire.game.errors.CardNotAvailableFromDeckException;
@@ -20,10 +21,14 @@ public class MutableDeck implements Deck, Serializable {
 	}
 
 	public MutableDeck(int handSize) {
+		this(handSize, new Random());
+	}
+
+	public MutableDeck(int handSize, Random random) {
 		this.handSize = handSize;
 
 		List<Card> cards = new ArrayList<>(Card.getAll());
-		Collections.shuffle(cards);
+		Collections.shuffle(cards, random);
 
 		this.cards = new Pile();
 		this.cards.add(0, false, cards);

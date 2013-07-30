@@ -1,8 +1,5 @@
 package me.tedyoung.solitaire.tester;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import me.tedyoung.solitaire.framework.AbstractTester;
 import me.tedyoung.solitaire.game.Card;
 import me.tedyoung.solitaire.game.Game;
@@ -40,25 +37,13 @@ public class DeadlockScanner extends AbstractTester {
 		for (Candidate candidate : candidates.values())
 			candidate.initializeDependencies();
 
-		if (revised) {
-			Set<Card> dependants = EnumSet.noneOf(Card.class);
-			for (Candidate candidate : candidates.values())
-				dependants.addAll(candidate.getDependency().getCards());
-
-			return Group.allOf(candidates.getAll(dependants)).isFreeOfCycle(new SearchContext(getRunControl(), game, revised));
-			//
-			// SearchContext context = new SearchContext(getRunControl(), game, revised);
-			// for (MutableStack stack : game.getTable())
-			// for (Card card : stack.getAllCards())
-			// // if (dependants.contains(card))
-			// if (!candidates.get(card).isFreeOfCycle(context))
-			// return false;
-			//
-			// if (!candidates.get(game.getDeck().getAllCards().get(0)).isFreeOfCycle(context))
-			// return false;
-			//
-			// return true;
-		}
+		// if (revised) {
+		// Set<Card> dependants = EnumSet.noneOf(Card.class);
+		// for (Candidate candidate : candidates.values())
+		// dependants.addAll(candidate.getDependency().getCards());
+		//
+		// return Group.allOf(candidates.getAll(dependants)).isFreeOfCycle(new SearchContext(getRunControl(), game, revised));
+		// }
 
 		return Group.allOf(candidates.values()).isFreeOfCycle(new SearchContext(getRunControl(), game, revised));
 	}
