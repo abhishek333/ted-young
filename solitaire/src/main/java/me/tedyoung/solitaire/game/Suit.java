@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public enum Suit {
-	SPADES("\u2660", BLACK), CLUBS("\u2663", BLACK), HEARTS("\u2665", RED), DIAMONDS("\u2666", RED);
+	SPADES("\u2660", BLACK), HEARTS("\u2665", RED), CLUBS("\u2663", BLACK), DIAMONDS("\u2666", RED);
 
 	private final String symbol;
 

@@ -1,6 +1,6 @@
 package me.tedyoung.solitaire.tester.group;
 
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Set;
 
 import me.tedyoung.solitaire.game.Card;
@@ -44,7 +44,7 @@ public class Scalar extends Group {
 
 	@Override
 	public Set<Card> getCards() {
-		return isEmpty() ? Collections.<Card> emptySet() : dependency.getCards();
+		return isEmpty() ? EnumSet.noneOf(Card.class) : dependency.getCards();
 	}
 
 	@Override

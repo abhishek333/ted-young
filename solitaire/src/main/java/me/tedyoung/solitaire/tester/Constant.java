@@ -1,6 +1,6 @@
 package me.tedyoung.solitaire.tester;
 
-import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Set;
 
 import me.tedyoung.solitaire.game.Card;
@@ -24,7 +24,7 @@ public class Constant extends Dependency {
 
 	@Override
 	public Set<Card> getCards() {
-		return Collections.emptySet();
+		return EnumSet.noneOf(Card.class);
 	}
 
 	@Override

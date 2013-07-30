@@ -2,7 +2,7 @@ package me.tedyoung.solitaire.tester.group;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -15,7 +15,6 @@ import me.tedyoung.solitaire.utilities.CollectionUtilities;
 public abstract class CompositeGroup extends Group {
 	protected final Set<Dependency> dependencies = new LinkedHashSet<>();
 	protected Boolean value;
-	private Boolean cache;
 
 	public CompositeGroup(Dependency... dependencies) {
 		this(Arrays.asList(dependencies));
@@ -64,22 +63,24 @@ public abstract class CompositeGroup extends Group {
 		if (isConstant())
 			return value;
 
-		if (cache != null)
-			return cache;
-
 		boolean result = areDependenciesFreeOfCycle(context);
 
 		if (result)
-			cache = result;
+			makeConstant(true);
 
 		return result;
+	}
+
+	protected boolean areDependenciesFreeOfCycle(SearchContext context) {
+		for (Dependency dependency : dependencies)
+			if (dependency.isFreeOfCycle(context) != defaultValue())
+				return !defaultValue();
+		return defaultValue();
 	}
 
 	protected void makeConstant(boolean value) {
 		this.value = value;
 	}
-
-	protected abstract boolean areDependenciesFreeOfCycle(SearchContext context);
 
 	protected abstract boolean defaultValue();
 
@@ -95,7 +96,7 @@ public abstract class CompositeGroup extends Group {
 
 	@Override
 	public Set<Card> getCards() {
-		HashSet<Card> cards = new HashSet<>();
+		Set<Card> cards = EnumSet.noneOf(Card.class);
 		for (Dependency dependency : dependencies)
 			cards.addAll(dependency.getCards());
 		return cards;

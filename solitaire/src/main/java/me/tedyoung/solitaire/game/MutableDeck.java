@@ -22,7 +22,7 @@ public class MutableDeck implements Deck, Serializable {
 	public MutableDeck(int handSize) {
 		this.handSize = handSize;
 
-		List<Card> cards = Card.getAll();
+		List<Card> cards = new ArrayList<>(Card.getAll());
 		Collections.shuffle(cards);
 
 		this.cards = new Pile();

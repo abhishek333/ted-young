@@ -8,6 +8,8 @@ import me.tedyoung.solitaire.game.Card;
 import me.tedyoung.solitaire.utilities.CardMap;
 
 public class CandidateMap extends CardMap<Candidate> {
+	private static final long serialVersionUID = 1L;
+
 	public CandidateMap() {
 	}
 

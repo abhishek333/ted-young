@@ -1,39 +1,33 @@
 package me.tedyoung.solitaire.game;
 
-import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class Card implements Comparable<Card>, Serializable {
-	private static final long serialVersionUID = 1L;
+public enum Card implements Comparable<Card>, Serializable {
+	SA(Denomination.ACE, Suit.SPADES), S2(Denomination.TWO, Suit.SPADES), S3(Denomination.THREE, Suit.SPADES), S4(Denomination.FOUR, Suit.SPADES), S5(Denomination.FIVE, Suit.SPADES), S6(Denomination.SIX, Suit.SPADES), S7(Denomination.SEVEN, Suit.SPADES), S8(Denomination.EIGHT, Suit.SPADES), S9(Denomination.NINE, Suit.SPADES), ST(Denomination.TEN, Suit.SPADES), SJ(Denomination.JACK, Suit.SPADES), SQ(Denomination.QUEEN, Suit.SPADES), SK(Denomination.KING, Suit.SPADES), HA(Denomination.ACE,
+			Suit.HEARTS), H2(Denomination.TWO, Suit.HEARTS), H3(Denomination.THREE, Suit.HEARTS), H4(Denomination.FOUR, Suit.HEARTS), H5(Denomination.FIVE, Suit.HEARTS), H6(Denomination.SIX, Suit.HEARTS), H7(Denomination.SEVEN, Suit.HEARTS), H8(Denomination.EIGHT, Suit.HEARTS), H9(Denomination.NINE, Suit.HEARTS), HT(Denomination.TEN, Suit.HEARTS), HJ(Denomination.JACK, Suit.HEARTS), HQ(Denomination.QUEEN, Suit.HEARTS), HK(Denomination.KING, Suit.HEARTS), CA(Denomination.ACE, Suit.CLUBS), C2(
+			Denomination.TWO, Suit.CLUBS), C3(Denomination.THREE, Suit.CLUBS), C4(Denomination.FOUR, Suit.CLUBS), C5(Denomination.FIVE, Suit.CLUBS), C6(Denomination.SIX, Suit.CLUBS), C7(Denomination.SEVEN, Suit.CLUBS), C8(Denomination.EIGHT, Suit.CLUBS), C9(Denomination.NINE, Suit.CLUBS), CT(Denomination.TEN, Suit.CLUBS), CJ(Denomination.JACK, Suit.CLUBS), CQ(Denomination.QUEEN, Suit.CLUBS), CK(Denomination.KING, Suit.CLUBS), DA(Denomination.ACE, Suit.DIAMONDS), D2(Denomination.TWO,
+			Suit.DIAMONDS), D3(Denomination.THREE, Suit.DIAMONDS), D4(Denomination.FOUR, Suit.DIAMONDS), D5(Denomination.FIVE, Suit.DIAMONDS), D6(Denomination.SIX, Suit.DIAMONDS), D7(Denomination.SEVEN, Suit.DIAMONDS), D8(Denomination.EIGHT, Suit.DIAMONDS), D9(Denomination.NINE, Suit.DIAMONDS), DT(Denomination.TEN, Suit.DIAMONDS), DJ(Denomination.JACK, Suit.DIAMONDS), DQ(Denomination.QUEEN, Suit.DIAMONDS), DK(Denomination.KING, Suit.DIAMONDS), UNKNOWN(null, null);
 
-	public static final Card UNKNOWN = new Card(null, null);
+	private static final List<Card> cards = Collections.unmodifiableList(Arrays.asList(values()).subList(0, 52));
 
-	private static final ArrayList<Card> cards = new ArrayList<>(52);
-
-	static {
-		for (Suit suit : Suit.values())
-			for (Denomination denomination : Denomination.values())
-				cards.add(new Card(denomination, suit));
-
+	public static Card get(int index) {
+		return values()[index];
 	}
 
 	public static Card get(Suit suit, Denomination denomination) {
-		return cards.get(suit.ordinal() * 13 + denomination.ordinal());
-	}
-
-	public static Card get(int index) {
-		return cards.get(index);
+		return get(suit.ordinal() * 13 + denomination.ordinal());
 	}
 
 	public static List<Card> getAll() {
-		return new ArrayList<>(cards);
+		return cards;
 	}
 
 	public static List<Card> getAll(Suit suit) {
-		return new ArrayList<>(cards.subList(suit.ordinal() * 13, suit.ordinal() * 13 + 13));
+		return cards.subList(suit.ordinal() * 13, suit.ordinal() * 13 + 13);
 	}
 
 	public static List<Card> getAll(Denomination denomination) {
@@ -44,7 +38,7 @@ public class Card implements Comparable<Card>, Serializable {
 	}
 
 	public static List<Card> getAll(Suit suit, Denomination from, Denomination to) {
-		return new ArrayList<>(cards.subList(suit.ordinal() * 13 + from.ordinal(), suit.ordinal() * 13 + to.ordinal() + 1));
+		return cards.subList(suit.ordinal() * 13 + from.ordinal(), suit.ordinal() * 13 + to.ordinal() + 1);
 	}
 
 	public static List<Card> getAll(Denomination from, Denomination to) {
@@ -68,10 +62,6 @@ public class Card implements Comparable<Card>, Serializable {
 
 	public Suit getSuit() {
 		return suit;
-	}
-
-	public int index() {
-		return suit.ordinal() * 13 + denomination.ordinal();
 	}
 
 	public Card getPeer() {
@@ -126,60 +116,8 @@ public class Card implements Comparable<Card>, Serializable {
 		return that.suit == this.suit && this.denomination.compareTo(that.denomination) < 0;
 	}
 
-	public Card getSuccessor() {
-		if (this == UNKNOWN || denomination == Denomination.ACE)
-			return null;
-
-		return Card.get(suit, denomination.next());
-	}
-
-	private Object readResolve() throws ObjectStreamException {
-		return get(suit, denomination);
-	}
-
-	@Override
-	public int compareTo(Card that) {
-		if (this == that)
-			return 0;
-		else if (this == UNKNOWN)
-			return -1;
-		else if (that == UNKNOWN)
-			return 1;
-
-		if (this.denomination != that.denomination)
-			return this.denomination.compareTo(that.denomination);
-		else
-			return this.suit.compareTo(that.suit);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((denomination == null) ? 0 : denomination.hashCode());
-		result = prime * result + ((suit == null) ? 0 : suit.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Card other = (Card) obj;
-		if (denomination != other.denomination)
-			return false;
-		if (suit != other.suit)
-			return false;
-		return true;
-	}
-
 	@Override
 	public String toString() {
 		return (denomination == null ? "?" : denomination).toString() + (suit == null ? "?" : suit).toString();
 	}
-
 }
