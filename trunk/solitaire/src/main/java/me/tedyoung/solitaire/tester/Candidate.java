@@ -209,7 +209,7 @@ public class Candidate extends Dependency {
 		return context.end(value);
 	}
 
-	public Dependency restricted() {
+	Dependency restricted() {
 		return new Dependency() {
 			@Override
 			public boolean isConstant() {

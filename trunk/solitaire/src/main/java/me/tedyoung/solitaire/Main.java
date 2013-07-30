@@ -13,7 +13,7 @@ import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
 public class Main {
 	public static void main(String... arguments) throws InterruptedException, ExecutionException, IOException {
-		TestEngine engine = new TestEngine(6);
+		TestEngine engine = new TestEngine(7);
 		// PlayerTestFactory factory = new PlayerTestFactory();
 		TesterTestFactory factory = new TesterTestFactory();
 		engine.add(factory);
@@ -22,7 +22,7 @@ public class Main {
 
 		// factory.setGameSource(PersistentGameSource.load("../../games.ser"));
 
-		RandomGameSource source = new RandomGameSource(1000, 3);
+		RandomGameSource source = new RandomGameSource(5000, 3);
 		factory.setGameSource(source);
 		System.out.println("Seed: " + source.getSeed() + "L");
 
