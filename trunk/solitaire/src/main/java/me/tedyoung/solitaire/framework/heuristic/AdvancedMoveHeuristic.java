@@ -22,8 +22,8 @@ public class AdvancedMoveHeuristic implements MoveHeuristic {
 		this(false);
 	}
 
-	public AdvancedMoveHeuristic(boolean revised) {
-		this.solver = revised;
+	public AdvancedMoveHeuristic(boolean solver) {
+		this.solver = solver;
 	}
 
 	@Override

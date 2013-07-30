@@ -50,6 +50,7 @@ public class Candidate extends Dependency {
 			int index = cards.indexOf(card);
 			int peer = cards.indexOf(card.getPeer());
 			// Note: cannot be both or top card, either create roughly 1:2000 falshes.
+			// Consider: JH 5D JD QS: the JH will required JD2F, JD will reach for 5D which is blocked by JH.
 			if (peer != -1 && peer < index) {
 				int holder0 = cards.indexOf(card.getHolders().get(0));
 				int holder1 = cards.indexOf(card.getHolders().get(1));

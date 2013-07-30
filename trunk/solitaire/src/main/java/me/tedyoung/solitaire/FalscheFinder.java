@@ -12,13 +12,13 @@ import me.tedyoung.solitaire.framework.RandomGameSource;
 import me.tedyoung.solitaire.game.Game;
 import me.tedyoung.solitaire.game.MutableGame;
 import me.tedyoung.solitaire.mcs.MonteCarloSolver;
-import me.tedyoung.solitaire.tester.DeadlockScanner;
+import me.tedyoung.solitaire.tester.DeadlockTester;
 import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
 public class FalscheFinder {
 	public static void main(String... args) throws IOException {
 		PlayerRunControl control = new PlayerRunControl(120, TimeUnit.MINUTES, 5000);
-		DeadlockScanner scanner = new DeadlockScanner(control, false);
+		DeadlockTester scanner = new DeadlockTester(control, false);
 		MonteCarloSolver solver = new MonteCarloSolver(2, 1, control, false);
 
 		int count = 4;
