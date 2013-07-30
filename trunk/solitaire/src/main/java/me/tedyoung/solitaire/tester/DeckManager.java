@@ -1,9 +1,11 @@
 package me.tedyoung.solitaire.tester;
 
+import static me.tedyoung.solitaire.tester.Candidate.canMovementBeRestricted;
 import static me.tedyoung.solitaire.tester.Dependency.SUCCEED;
 import static me.tedyoung.solitaire.tester.group.Group.anyOf;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import me.tedyoung.solitaire.game.Card;
@@ -31,10 +33,10 @@ public class DeckManager {
 		Candidate top = get(index + 2, cards, candidates);
 		Candidate middle = get(index + 1, cards, candidates);
 
-		// if (revised && top != null && middle != null && canMovementBeRestricted(top.getCard()) && top.getCard().isPeerOf(middle.getCard()) && cards.get(index).isHolderOf(top.getCard()))
-		// options.add(top.inPeerGroup().and(middle.inPeerGroup()));
-		// else
-		options.add(top.and(middle));
+		if (revised && canMovementBeRestricted(top.getCard()) && top.getCard().isPeerOf(middle.getCard()) && cards.get(index).isHolderOf(top.getCard()))
+			options.add(top.and(middle.restricted()));
+		else
+			options.add(top.and(middle));
 
 		for (int i = 2; i < index; i += 3)
 			options.add(get(i, cards, candidates));
@@ -60,18 +62,17 @@ public class DeckManager {
 			for (int j = i; j < index; j += 3)
 				alternatives.add(get(j + 1, cards, candidates));
 
-			// if (revised && top != null && canMovementBeRestricted(top.getCard())) {
-			// for (Iterator<Candidate> iterator = alternatives.iterator(); iterator.hasNext();) {
-			// candidate = iterator.next();
-			// if (top.getCard().isPeerOf(candidate.getCard()) && cards.get(index).isHolderOf(top.getCard())) {
-			// iterator.remove();
-			// options.add(top.inPeerGroup().and(candidate.inPeerGroup()));
-			// }
-			//
-			// }
-			// }
+			if (revised && canMovementBeRestricted(top.getCard())) {
+				for (Iterator<Candidate> iterator = alternatives.iterator(); iterator.hasNext();) {
+					candidate = iterator.next();
+					if (top.getCard().isPeerOf(candidate.getCard()) && cards.get(index).isHolderOf(top.getCard())) {
+						iterator.remove();
+						options.add(top.and(candidate.restricted()));
+					}
 
-			// Collections.sort(alternatives);
+				}
+			}
+
 			options.add(top.and(anyOf(alternatives)));
 		}
 

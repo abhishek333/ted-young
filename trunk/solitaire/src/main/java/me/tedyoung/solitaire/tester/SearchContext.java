@@ -73,12 +73,12 @@ public class SearchContext {
 
 	private static class CacheNode {
 		private final Card from, to;
-		private final boolean peerGroup;
+		private final boolean restricted;
 
 		public CacheNode(Card from, Card to, boolean peerGroup) {
 			this.from = from;
 			this.to = to;
-			this.peerGroup = peerGroup;
+			this.restricted = peerGroup;
 		}
 
 		@Override
@@ -86,7 +86,7 @@ public class SearchContext {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((from == null) ? 0 : from.hashCode());
-			result = prime * result + (peerGroup ? 1231 : 1237);
+			result = prime * result + (restricted ? 1231 : 1237);
 			result = prime * result + ((to == null) ? 0 : to.hashCode());
 			return result;
 		}
@@ -106,7 +106,7 @@ public class SearchContext {
 			}
 			else if (!from.equals(other.from))
 				return false;
-			if (peerGroup != other.peerGroup)
+			if (restricted != other.restricted)
 				return false;
 			if (to == null) {
 				if (other.to != null)

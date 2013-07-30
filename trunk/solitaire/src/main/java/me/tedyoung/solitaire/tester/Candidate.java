@@ -33,43 +33,31 @@ public class Candidate extends Dependency {
 	}
 
 	public static boolean canMovementBeRestricted(Card card) {
-		return !(card.getDenomination() == Denomination.ACE || card.getDenomination() == Denomination.KING);
+		return card.getDenomination() != Denomination.ACE && card.getDenomination() != Denomination.KING;
 	}
 
 	public void initializeDependencies() {
 		movementDependency = move(card);
 
-		// if (canMovementBeRestricted(card))
-		// restrictedMovementDependency = restrictedMove(card);
-		// else
-		restrictedMovementDependency = movementDependency;
+		if (canMovementBeRestricted(card))
+			restrictedMovementDependency = restrictedMove(card);
+		else
+			restrictedMovementDependency = movementDependency;
 
 		if (location(card) == Location.STACK && canMovementBeRestricted(card)) {
 			MutableStack stack = game.getTable().getStackContainingCard(card);
 			List<Card> cards = stack.getAllCards();
 			int index = cards.indexOf(card);
 			int peer = cards.indexOf(card.getPeer());
-			int holder0 = cards.indexOf(card.getHolders().get(0));
-			int holder1 = cards.indexOf(card.getHolders().get(1));
-
-			if (peer != -1 && Math.max(index, peer) < Math.max(holder0, holder1))
-				movementRestricted = true;
+			// Note: cannot be both or top card, either create roughly 1:2000 falshes.
+			if (peer != -1 && peer < index) {
+				int holder0 = cards.indexOf(card.getHolders().get(0));
+				int holder1 = cards.indexOf(card.getHolders().get(1));
+				if (Math.max(index, peer) < Math.max(holder0, holder1))
+					movementRestricted = true;
+			}
 		}
 
-	}
-
-	private Dependency restrictedMove(Card card) {
-		switch (location(card)) {
-			case STACK:
-			case DECK:
-				return moveToFoundation(card).or(moveToStack(card).and(moveToFoundation(card.getPeer())));
-
-			case FOUNDATION:
-				return moveToStack(card).and(moveToFoundation(card.getPeer()));
-
-			default:
-				return FAIL;
-		}
 	}
 
 	private Dependency move(Card card) {
@@ -80,6 +68,20 @@ public class Candidate extends Dependency {
 
 			case FOUNDATION:
 				return moveToStack(card);
+
+			default:
+				return FAIL;
+		}
+	}
+
+	private Dependency restrictedMove(Card card) {
+		switch (location(card)) {
+			case STACK:
+			case DECK:
+				return moveToFoundation(card).or(moveToStack(card).and(moveToFoundation(card.getPeer())));
+
+			case FOUNDATION:
+				return moveToStack(card).and(moveToFoundation(card.getPeer()));
 
 			default:
 				return FAIL;
@@ -207,7 +209,7 @@ public class Candidate extends Dependency {
 		return context.end(value);
 	}
 
-	public Dependency inPeerGroup() {
+	public Dependency restricted() {
 		return new Dependency() {
 			@Override
 			public boolean isConstant() {
