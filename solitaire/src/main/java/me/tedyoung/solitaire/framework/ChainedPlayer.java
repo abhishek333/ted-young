@@ -6,19 +6,24 @@ import java.util.List;
 
 import me.tedyoung.solitaire.game.Game;
 import me.tedyoung.solitaire.game.MutableGame;
+import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
 public class ChainedPlayer extends AbstractPlayer {
 	private String name = "Chained";
 
 	private List<Player> players = new ArrayList<>();
 
-	public ChainedPlayer(String name, Player... players) {
+	public ChainedPlayer(String name, PlayerRunControl control, Player... players) {
 		this.name = name;
+		setRunControl(control);
 		this.players.addAll(Arrays.asList(players));
 
 		for (int index = players.length - 1; index > 0; index--)
 			if (players[index - 1] instanceof ChainablePlayer)
 				((ChainablePlayer) players[index - 1]).chainedTo(players[index]);
+
+		for (Player player : players)
+			player.setRunControl(control);
 	}
 
 	@Override
@@ -33,18 +38,6 @@ public class ChainedPlayer extends AbstractPlayer {
 		}
 
 		return result;
-	}
-
-	@Override
-	public void pause(Game game) {
-		for (Player player : players)
-			player.pause(game);
-	}
-
-	@Override
-	public void resume(Game game) {
-		for (Player player : players)
-			player.resume(game);
 	}
 
 	@Override

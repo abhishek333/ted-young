@@ -10,12 +10,6 @@ import com.google.common.base.Stopwatch;
 
 public class PlayerRunControl {
 	private final RunControl runControl = new RunControl();
-	// private final GameLocal<RunControl> runControl = new GameLocal<RunControl>() {
-	// @Override
-	// protected RunControl defaultValue() {
-	// return new RunControl();
-	// }
-	// };
 
 	private final long maximumTime;
 	private final GameLocal<Stopwatch> stopwatch = new GameLocal<Stopwatch>() {

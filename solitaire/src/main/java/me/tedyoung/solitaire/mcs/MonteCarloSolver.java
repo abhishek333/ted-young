@@ -11,10 +11,12 @@ import me.tedyoung.solitaire.framework.AbstractScoringPlayer;
 import me.tedyoung.solitaire.framework.ChainablePlayer;
 import me.tedyoung.solitaire.framework.GameResult;
 import me.tedyoung.solitaire.framework.Player;
+import me.tedyoung.solitaire.framework.Tester;
 import me.tedyoung.solitaire.framework.heuristic.AdvancedMoveHeuristic;
 import me.tedyoung.solitaire.game.Game;
 import me.tedyoung.solitaire.game.MutableGame;
 import me.tedyoung.solitaire.game.move.Move;
+import me.tedyoung.solitaire.tester.DeadlockTester;
 import me.tedyoung.solitaire.utilities.GameCache;
 import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
@@ -22,10 +24,9 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 	protected String name = "MCS";
 
 	protected Lookahead lookahead;
+	protected Tester tester;
 
 	protected boolean revised;
-
-	protected boolean useDeadlockDetection = true;
 
 	protected List<MonteCarloHeuristic> heuristics = new ArrayList<>();
 
@@ -42,63 +43,68 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 		if (closing != null)
 			heuristics.add(new ClosingHeuristic(closing));
 
-		this.revised = revised;
-		MonteCarloMoveSource source = new MonteCarloMoveSource(revised);
-		source.setCheckForDeadLocks(false);
-		setMoveSource(source);
-		setRunControl(control);
-
-		if (this.heuristics.size() == 1 && this.heuristics.get(0).getEvaluationDepth() == -1)
-			setLookahead(new Lookahead(new AdvancedMoveHeuristic(false), null));
-		else
-			setLookahead(new Lookahead(new ClosingHeuristic(-1), new Lookahead(new AdvancedMoveHeuristic(false), null)));
+		initialize(revised, control);
 	}
 
 	public MonteCarloSolver(PlayerRunControl control, MonteCarloHeuristic... heuristics) {
+		this(false, control, heuristics);
+	}
+
+	public MonteCarloSolver(boolean revised, PlayerRunControl control, MonteCarloHeuristic... heuristics) {
 		this.heuristics.addAll(Arrays.asList(heuristics));
-		this.revised = false;
+		initialize(revised, control);
+	}
+
+	private void initialize(boolean revised, PlayerRunControl control) {
+		this.revised = revised;
+		setRunControl(control);
+
 		MonteCarloMoveSource source = new MonteCarloMoveSource(revised);
 		source.setCheckForDeadLocks(false);
 		setMoveSource(source);
-		setRunControl(control);
 
-		if (this.heuristics.size() == 1 && this.heuristics.get(0).getEvaluationDepth() == -1)
-			setLookahead(new Lookahead(new AdvancedMoveHeuristic(false), null));
+		if (maximumHeuristicEvaluationDepth() == -1)
+			setLookahead(new Lookahead(new AdvancedMoveHeuristic(), null));
 		else
-			setLookahead(new Lookahead(new ClosingHeuristic(-1), new Lookahead(new AdvancedMoveHeuristic(false), null)));
+			setLookahead(new Lookahead(new ClosingHeuristic(-1), new Lookahead(new AdvancedMoveHeuristic(), null)));
+
+		if (totalHeuristicEvaluationDepth() > 3)
+			setTester(new DeadlockTester(control));
+	}
+
+	private int maximumHeuristicEvaluationDepth() {
+		int max = Integer.MIN_VALUE;
+		for (MonteCarloHeuristic heuristic : heuristics)
+			if (heuristic.getEvaluationDepth() > max)
+				max = heuristic.getEvaluationDepth();
+		return max;
+	}
+
+	private int totalHeuristicEvaluationDepth() {
+		int sum = 0;
+		for (MonteCarloHeuristic heuristic : heuristics)
+			sum += heuristic.getEvaluationDepth();
+		return sum;
 	}
 
 	@Override
 	public void chainedTo(Player player) {
+		player.setRunControl(this.getRunControl());
 		if (player instanceof MonteCarloSolver) {
-			((MonteCarloSolver) player).cache = this.cache;
-			this.useDeadlockDetection = false;
+			MonteCarloSolver that = (MonteCarloSolver) player;
+			that.cache = this.cache;
+			if (tester != null) {
+				that.tester = tester;
+				this.tester = null;
+			}
 		}
 	}
 
 	@Override
-	public void pause(Game game) {
-		if (lookahead != null)
-			lookahead.pause(game);
-		super.pause(game);
-	}
-
-	@Override
-	public void resume(Game game) {
-		if (lookahead != null)
-			lookahead.resume(game);
-		super.resume(game);
-	}
-
-	@Override
 	public GameResult playGame(Game game) {
-		if (isBlocked((MutableGame) game))
+		if (tester != null && !tester.isSolvable(game))
 			return GameResult.LOST;
 		return super.playGame(game);
-	}
-
-	private boolean isBlocked(MutableGame game) {
-		return false;
 	}
 
 	@Override
@@ -204,6 +210,12 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 			this.lookahead.setRunControl(getRunControl());
 	}
 
+	public void setTester(Tester tester) {
+		this.tester = tester;
+		if (this.tester != null)
+			this.tester.setRunControl(getRunControl());
+	}
+
 	@Override
 	public void setRunControl(PlayerRunControl control) {
 		super.setRunControl(control);
@@ -217,10 +229,6 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public void setUseDeadlockDetection(boolean useDeadlockDetection) {
-		this.useDeadlockDetection = useDeadlockDetection;
 	}
 
 }

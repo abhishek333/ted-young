@@ -7,15 +7,19 @@ import me.tedyoung.solitaire.game.MutableGame;
 import me.tedyoung.solitaire.tester.group.Group;
 import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
-public class DeadlockScanner extends AbstractTester {
+public class DeadlockTester extends AbstractTester {
 	private boolean revised;
 	private static final PlayabilityTester PLAYABILITY_TESTER = new PlayabilityTester();
 
-	public DeadlockScanner(PlayerRunControl control) {
+	public DeadlockTester() {
+		this(new PlayerRunControl(), false);
+	}
+
+	public DeadlockTester(PlayerRunControl control) {
 		this(control, false);
 	}
 
-	public DeadlockScanner(PlayerRunControl control, boolean revised) {
+	public DeadlockTester(PlayerRunControl control, boolean revised) {
 		this.revised = revised;
 		setRunControl(control);
 	}
