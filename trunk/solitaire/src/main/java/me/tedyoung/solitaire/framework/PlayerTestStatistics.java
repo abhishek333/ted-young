@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Stopwatch;
 
-class PlayerTestStatistics {
+public class PlayerTestStatistics {
 	private Player player;
 
 	private Stopwatch stopwatch = new Stopwatch();

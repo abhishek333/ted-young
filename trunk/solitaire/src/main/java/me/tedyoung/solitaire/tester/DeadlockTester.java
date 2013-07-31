@@ -54,6 +54,6 @@ public class DeadlockTester extends AbstractTester {
 
 	@Override
 	public String getName() {
-		return "DeadlockScanner" + (revised ? "*" : "");
+		return "DeadlockTester" + (revised ? "*" : "");
 	}
 }

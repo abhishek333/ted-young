@@ -18,12 +18,13 @@ public class ChainedPlayer extends AbstractPlayer {
 		setRunControl(control);
 		this.players.addAll(Arrays.asList(players));
 
+		for (Player player : players)
+			player.setRunControl(control);
+
 		for (int index = players.length - 1; index > 0; index--)
 			if (players[index - 1] instanceof ChainablePlayer)
 				((ChainablePlayer) players[index - 1]).chainedTo(players[index]);
 
-		for (Player player : players)
-			player.setRunControl(control);
 	}
 
 	@Override

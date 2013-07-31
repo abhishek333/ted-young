@@ -17,14 +17,14 @@ import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
 public class FalscheFinder {
 	public static void main(String... args) throws IOException {
-		PlayerRunControl control = new PlayerRunControl(120, TimeUnit.MINUTES, 5000);
+		PlayerRunControl control = new PlayerRunControl(4, TimeUnit.HOURS, 5000);
 		DeadlockTester scanner = new DeadlockTester(control, false);
-		MonteCarloSolver solver = new MonteCarloSolver(2, 1, control, false);
+		MonteCarloSolver solver = new MonteCarloSolver(3, 2, control, false);
 
-		int count = 4;
+		int count = 2;
 
 		ArrayList<Game> games = new ArrayList<>();
-		GameSource source = new RandomGameSource(Integer.MAX_VALUE, 3);
+		GameSource source = new RandomGameSource(50, 3, -102389862848771009L);
 		while (count > 0 && source.hasNext()) {
 			Game game = source.next();
 			if (!scanner.isSolvable(game) && solver.playGame(game) == GameResult.WON) {
