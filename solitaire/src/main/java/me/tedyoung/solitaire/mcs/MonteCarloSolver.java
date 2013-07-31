@@ -68,8 +68,9 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 		else
 			setLookahead(new Lookahead(new ClosingHeuristic(-1), new Lookahead(new AdvancedMoveHeuristic(), null)));
 
-		if (totalHeuristicEvaluationDepth() > 3)
-			setTester(new DeadlockTester(control));
+		if (revised)
+			if (totalHeuristicEvaluationDepth() > 3)
+				setTester(new DeadlockTester(control));
 	}
 
 	private int maximumHeuristicEvaluationDepth() {

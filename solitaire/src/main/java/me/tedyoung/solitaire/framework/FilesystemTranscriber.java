@@ -23,9 +23,9 @@ public class FilesystemTranscriber implements Transcriber {
 
 	private PrintWriter out;
 
-	public FilesystemTranscriber(String name, String path) throws FileNotFoundException {
+	public FilesystemTranscriber(String name) throws FileNotFoundException {
 		Date date = new Date();
-		out = new PrintWriter(new File(path, String.format("%s %tF.txt", name, date)));
+		out = new PrintWriter(new File(String.format("%s %tF.txt", name, date)));
 		out.printf("%s %tF %tT", name, date, date);
 		out.println();
 	}
@@ -42,7 +42,7 @@ public class FilesystemTranscriber implements Transcriber {
 	}
 
 	@Override
-	public synchronized void transcribe(MutableGame game) {
+	public synchronized void transcribe(MutableGame game, Test test) {
 		if (game.isComplete()) {
 			out.print("W");
 			wins++;

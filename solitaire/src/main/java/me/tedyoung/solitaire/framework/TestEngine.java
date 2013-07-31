@@ -46,7 +46,7 @@ public class TestEngine implements SwingProgressBar.Listener {
 				test.cleanup();
 
 				if (transcriber != null)
-					transcriber.transcribe(game);
+					transcriber.transcribe(game, test);
 			}
 
 			@Override
