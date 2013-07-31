@@ -20,7 +20,7 @@ public class ClosingHeuristic extends MonteCarloHeuristic {
 		if (game.isComplete())
 			return WON;
 
-		int score = game.getFoundation().getSize() * 5;
+		int score = game.getFoundation().size() * 5;
 
 		for (MutableStack stack : game.getTable()) {
 			List<Card> cards = new ArrayList<>(stack.getHiddenCards());

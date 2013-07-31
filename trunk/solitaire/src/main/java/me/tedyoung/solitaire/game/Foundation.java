@@ -10,7 +10,7 @@ public interface Foundation {
 
 	boolean isComplete();
 
-	int getSize();
+	int size();
 
 	Card getTopCard(Suit suit);
 
@@ -20,7 +20,7 @@ public interface Foundation {
 
 	boolean isComplete(Suit suit);
 
-	int getSize(Suit suit);
+	int size(Suit suit);
 
 	List<Card> getTopCards();
 

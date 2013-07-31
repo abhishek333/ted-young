@@ -4,15 +4,9 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import me.tedyoung.solitaire.framework.ChainedPlayer;
-import me.tedyoung.solitaire.framework.GameResult;
-import me.tedyoung.solitaire.framework.PlayerTest;
 import me.tedyoung.solitaire.framework.RandomGameSource;
-import me.tedyoung.solitaire.framework.SerializingTranscriber;
-import me.tedyoung.solitaire.framework.Test;
 import me.tedyoung.solitaire.framework.TestEngine;
 import me.tedyoung.solitaire.framework.TesterTestFactory;
-import me.tedyoung.solitaire.game.MutableGame;
 import me.tedyoung.solitaire.mcs.MonteCarloSolver;
 import me.tedyoung.solitaire.tester.DeadlockTester;
 import me.tedyoung.solitaire.utilities.PlayerRunControl;
@@ -30,21 +24,21 @@ public class Main {
 
 		// factory.setGameSource(PersistentGameSource.load("../../test.ser"));
 
-		RandomGameSource source = new RandomGameSource(1000, 3);
+		RandomGameSource source = new RandomGameSource(100, 3);
 		factory.setGameSource(source);
 		System.out.println("Seed: " + source.getSeed() + "L");
 
-		engine.setTranscriber(new SerializingTranscriber("../../test.ser") {
-			@Override
-			public boolean includeGame(MutableGame game, Test test) {
-				PlayerTest playerTest = (PlayerTest) test;
-				return playerTest.getPlayer().getName().contains("DeadlockTester") && playerTest.getStatistics().getResult() == GameResult.WON;
-			}
-		});
+		// engine.setTranscriber(new SerializingTranscriber("../../test.ser") {
+		// @Override
+		// public boolean includeGame(MutableGame game, Test test) {
+		// PlayerTest playerTest = (PlayerTest) test;
+		// return playerTest.getPlayer().getName().contains("DeadlockTester") && playerTest.getStatistics().getResult() == GameResult.WON;
+		// }
+		// });
 
 		PlayerRunControl control = new PlayerRunControl(4, TimeUnit.HOURS, 5000);
 
-		// factory.add(new MonteCarloSolver(3, 3, control, false));
+		factory.add(new MonteCarloSolver(1, 0, control, false));
 		// factory.add(new MonteCarloSolver(3, 2, control, true));
 
 		// factory.add(new MonteCarloSolver(null, 3, control, false));
@@ -53,9 +47,9 @@ public class Main {
 		factory.add(new DeadlockTester(control, true));
 		// factory.add(new DeadlockTester(control, false));
 
-		factory.add(new ChainedPlayer("Chained -/3, 3/3", control, new MonteCarloSolver(null, 3, null), new MonteCarloSolver(3, 3, null)));
+		// factory.add(new ChainedPlayer("Chained -/3, 3/3", control, new MonteCarloSolver(null, 3, null), new MonteCarloSolver(3, 3, null)));
 
-		// factory.add(new AdvancedPriorityPlayer());
+		factory.add(new AdvancedPriorityPlayer());
 
 		engine.run();
 

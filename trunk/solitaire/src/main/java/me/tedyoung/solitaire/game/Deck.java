@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface Deck {
 
-	int getSize();
+	int size();
 
 	boolean isEmpty();
 
@@ -14,11 +14,7 @@ public interface Deck {
 
 	boolean hasNextHand();
 
-	int getIndexOfCard(Card card);
-
 	List<Card> getVisibleCards();
-
-	int getNumberOfVisibleCards();
 
 	int getNumberOfHandsRemaining();
 

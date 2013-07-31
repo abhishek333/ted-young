@@ -1,5 +1,7 @@
 package me.tedyoung.solitaire.game;
 
+import static java.util.Collections.unmodifiableList;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,20 +49,25 @@ public class MutableDeck implements Deck, Serializable {
 		// if (!cards.isAnyVisible())
 		// dealNextHand();
 
-		return cards.getTop();
+		return cards.getVisible().get(0);
 	}
 
 	@Override
 	public List<Card> getVisibleCards() {
-		return Collections.unmodifiableList(cards.getVisible());
+		return unmodifiableList(cards.getVisible());
 	}
 
 	public List<Card> getHiddenCards() {
-		return Collections.unmodifiableList(cards.getHidden());
+		return unmodifiableList(cards.getHidden());
+	}
+
+	@Override
+	public List<Card> getAllCards() {
+		return unmodifiableList(cards.getAll());
 	}
 
 	public Card removeTopCard() {
-		return cards.removeTop();
+		return cards.remove(0);
 	}
 
 	public Card removeCard(Card card) {
@@ -88,12 +95,12 @@ public class MutableDeck implements Deck, Serializable {
 
 	@Override
 	public boolean hasNextHand() {
-		return cards.isAnyHidden();
+		return !cards.getHidden().isEmpty();
 	}
 
 	@Override
 	public int getNumberOfHandsRemaining() {
-		return (int) Math.ceil(cards.getHiddenSize() / (double) handSize);
+		return (int) Math.ceil(cards.getHidden().size() / (double) handSize);
 	}
 
 	public void flip() {
@@ -102,35 +109,18 @@ public class MutableDeck implements Deck, Serializable {
 	}
 
 	@Override
-	public List<Card> getAllCards() {
-		ArrayList<Card> list = new ArrayList<>(cards.getAll());
-		Collections.reverse(list);
-		return list;
-	}
-
-	@Override
 	public boolean isFlippable() {
-		return getSize() > handSize;
-	}
-
-	@Override
-	public int getIndexOfCard(Card card) {
-		return cards.indexOf(card);
+		return size() > handSize;
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return cards.isEmpty();
+		return cards.getAll().isEmpty();
 	}
 
 	@Override
-	public int getSize() {
-		return cards.getSize();
-	}
-
-	@Override
-	public int getNumberOfVisibleCards() {
-		return cards.getVisibleSize();
+	public int size() {
+		return cards.getAll().size();
 	}
 
 	public List<List<Card>> getHands() {
@@ -142,7 +132,7 @@ public class MutableDeck implements Deck, Serializable {
 
 		int previousTopCardIndex = cards.getFirstVisibleCardIndex();
 
-		if (getNumberOfVisibleCards() != 0)
+		if (!getVisibleCards().isEmpty())
 			hands.add(getTopCard());
 
 		while (hasNextHand()) {
@@ -171,10 +161,6 @@ public class MutableDeck implements Deck, Serializable {
 		cards.addAll(getThisAndSubsequentVisibleCards());
 		cards.addAll(getSubsequentVisibleCardsAfterFlip());
 		return cards;
-	}
-
-	public boolean containsCard(Card card) {
-		return cards.contains(card);
 	}
 
 	@Override

@@ -1,8 +1,9 @@
 package me.tedyoung.solitaire.game;
 
+import static java.util.Collections.unmodifiableList;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,7 @@ public class MutableTable implements Table<MutableStack>, Serializable {
 
 	@Override
 	public List<MutableStack> getStacks() {
-		return Collections.unmodifiableList(stacks);
+		return unmodifiableList(stacks);
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class MutableTable implements Table<MutableStack>, Serializable {
 
 	public MutableStack getStackContainingCard(Card card) {
 		for (MutableStack stack : stacks)
-			if (stack.containsCard(card))
+			if (stack.contains(card))
 				return stack;
 		return null;
 	}
@@ -87,15 +88,15 @@ public class MutableTable implements Table<MutableStack>, Serializable {
 	public int getNumberOfHiddenCards() {
 		int count = 0;
 		for (MutableStack stack : stacks)
-			count += stack.getNumberOfHiddenCards();
+			count += stack.getHiddenCards().size();
 		return count;
 	}
 
 	@Override
-	public int getSize() {
+	public int size() {
 		int count = 0;
 		for (Stack stack : stacks)
-			count += stack.getSize();
+			count += stack.size();
 		return count;
 	}
 

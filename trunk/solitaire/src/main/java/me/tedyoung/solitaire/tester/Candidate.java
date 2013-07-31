@@ -183,7 +183,7 @@ public class Candidate extends Dependency {
 	}
 
 	private Location location(Card card) {
-		if (game.getDeck().containsCard(card))
+		if (game.getDeck().getAllCards().contains(card))
 			return Location.DECK;
 		else if (game.getTable().getStackContainingCard(card) != null)
 			return Location.STACK;

@@ -53,7 +53,7 @@ public class AdvancedMoveHeuristic implements MoveHeuristic {
 					index = ((FoundationToStackMove) move).getStack();
 
 				MutableStack stack = ((MutableGame) game).getStack(index);
-				if (stack.getNumberOfHiddenCards() > 0)
+				if (stack.getHiddenCards().size() > 0)
 					bias += deadlockAvoidanceBias(card, stack.getHiddenCards());
 			}
 		}
@@ -85,7 +85,7 @@ public class AdvancedMoveHeuristic implements MoveHeuristic {
 			}
 			else {
 				// Uncover a card that can be played to the foundation
-				if (game.getFoundation().isPlayable(source.getVisibleCards().get(source.getIndexOfCard(card) + 1)))
+				if (game.getFoundation().isPlayable(source.getVisibleCards().get(source.getVisibleCards().indexOf(card) + 1)))
 					return 220 + bias;
 			}
 
@@ -96,7 +96,7 @@ public class AdvancedMoveHeuristic implements MoveHeuristic {
 		if (move instanceof DeckToStackMove) {
 			if (game.getDeck().getHandSize() == 1) {
 				Stack stack = game.getStack(((DeckToStackMove) move).getStack());
-				if (stack.getNumberOfVisibleCards() > 1 && move.getCard().getSuit() == stack.getVisibleCards().get(1).getSuit())
+				if (stack.getVisibleCards().size() > 1 && move.getCard().getSuit() == stack.getVisibleCards().get(1).getSuit())
 					bias += 5;
 			}
 
