@@ -30,7 +30,7 @@ public class PlayerRunControl {
 		this.maximumMoves = maximumMoves;
 	}
 
-	public void verifyWihtoutPause(Game game) {
+	public void verifyWihtoutYield(Game game) {
 		if (maximumTime > 0)
 			if (stopwatch.get(game).elapsed(TimeUnit.MILLISECONDS) > maximumTime)
 				throw new Abort.Timeout();
@@ -42,7 +42,7 @@ public class PlayerRunControl {
 	}
 
 	public void verify(Game game) {
-		verifyWihtoutPause(game);
+		verifyWihtoutYield(game);
 		runControl.verify();
 	}
 
