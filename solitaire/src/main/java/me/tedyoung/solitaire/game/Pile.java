@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 public class Pile implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -40,8 +42,8 @@ public class Pile implements Serializable {
 	public void add(int index, boolean visible, List<Card> cards) {
 		if (visible) {
 			index += firstVisibleCardIndex;
-			if (index > getSize())
-				index = getSize();
+			if (index > getAll().size())
+				index = getAll().size();
 		}
 		else {
 			if (index > firstVisibleCardIndex)
@@ -61,7 +63,7 @@ public class Pile implements Serializable {
 	}
 
 	public void hideAll() {
-		firstVisibleCardIndex = getSize();
+		firstVisibleCardIndex = getAll().size();
 		updateVisible();
 		this.hashCode = null;
 	}
@@ -73,31 +75,12 @@ public class Pile implements Serializable {
 		this.hashCode = null;
 	}
 
-	public Card getTop() {
-		return get(0);
-	}
-
-	public Card getBottom() {
-		return get(getVisibleSize() - 1);
-	}
-
-	public Card get(int index) {
-		if (!isAnyVisible())
-			return null;
-		else
-			return getVisible().get(index);
-	}
-
-	public Card removeTop() {
-		return remove(0);
-	}
-
 	public Card remove(Card card) {
-		return remove(indexOf(card));
+		return remove(getVisible().indexOf(card));
 	}
 
 	public Card remove(int index) {
-		if (!isAnyVisible() || index == -1)
+		if (getVisible().isEmpty() || index == -1)
 			return null;
 
 		prepareForUpdate();
@@ -128,10 +111,7 @@ public class Pile implements Serializable {
 	}
 
 	public List<List<Card>> group(int size) {
-		ArrayList<List<Card>> groups = new ArrayList<>();
-		for (int index = cards.size(); index > 0; index -= size)
-			groups.add(cards.subList(Math.max(index - size, 0), index));
-		return groups;
+		return Lists.partition(getAll(), size);
 	}
 
 	public void redact() {
@@ -140,47 +120,15 @@ public class Pile implements Serializable {
 	}
 
 	public List<Card> getVisible() {
-		return cards.subList(firstVisibleCardIndex, getSize());
+		return cards.subList(firstVisibleCardIndex, getAll().size());
 	}
 
 	public List<Card> getHidden() {
-		return cards.subList(0, firstVisibleCardIndex);
+		return Lists.reverse(cards.subList(0, firstVisibleCardIndex));
 	}
 
 	public List<Card> getAll() {
-		return cards;
-	}
-
-	public boolean isAnyVisible() {
-		return getVisibleSize() != 0;
-	}
-
-	public boolean isAnyHidden() {
-		return getHiddenSize() != 0;
-	}
-
-	public int indexOf(Card card) {
-		return getVisible().lastIndexOf(card);
-	}
-
-	public boolean contains(Card card) {
-		return cards.contains(card);
-	}
-
-	public int getSize() {
-		return cards.size();
-	}
-
-	public int getVisibleSize() {
-		return isEmpty() ? 0 : getSize() - firstVisibleCardIndex;
-	}
-
-	public int getHiddenSize() {
-		return isEmpty() ? 0 : firstVisibleCardIndex;
-	}
-
-	public boolean isEmpty() {
-		return cards.isEmpty();
+		return Lists.reverse(cards);
 	}
 
 	public void setMinimumVisible(int minimumVisible) {
@@ -188,8 +136,16 @@ public class Pile implements Serializable {
 	}
 
 	private void updateVisible() {
-		if (getVisibleSize() < minimumVisible)
-			show(minimumVisible - getVisibleSize());
+		if (getVisible().size() < minimumVisible)
+			show(minimumVisible - getVisible().size());
+	}
+
+	int getFirstVisibleCardIndex() {
+		return firstVisibleCardIndex;
+	}
+
+	void setFirstVisibleCardIndex(int firstVisibleCardIndex) {
+		this.firstVisibleCardIndex = firstVisibleCardIndex;
 	}
 
 	@Override
@@ -238,15 +194,4 @@ public class Pile implements Serializable {
 		return "[firstVisibleCardIndex=" + firstVisibleCardIndex + ", cards=" + cards + "]";
 	}
 
-	int getFirstVisibleCardIndex() {
-		return firstVisibleCardIndex;
-	}
-
-	void setFirstVisibleCardIndex(int firstVisibleCardIndex) {
-		this.firstVisibleCardIndex = firstVisibleCardIndex;
-	}
-
-	ArrayList<Card> getCards() {
-		return cards;
-	}
 }

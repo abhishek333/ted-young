@@ -10,18 +10,14 @@ public interface Stack {
 
 	Card getTopCard();
 
-	int getIndexOfCard(Card card);
-
 	boolean isEmpty();
 
-	int getSize();
+	int size();
 
 	int getIndex();
 
-	int getNumberOfHiddenCards();
-
-	int getNumberOfVisibleCards();
-
 	Card getLastVisibleCard();
+
+	int getNumberOfHiddenCards();
 
 }

@@ -1,5 +1,6 @@
 package me.tedyoung.solitaire.game;
 
+import static java.util.Collections.unmodifiableList;
 import static me.tedyoung.solitaire.game.Denomination.KING;
 
 import java.io.Serializable;
@@ -60,24 +61,22 @@ public class MutableStack implements Stack, Serializable {
 
 	@Override
 	public List<Card> getVisibleCards() {
-		return Collections.unmodifiableList(cards.getVisible());
+		return unmodifiableList(cards.getVisible());
 	}
 
 	public List<Card> getHiddenCards() {
-		List<Card> list = new ArrayList<>(cards.getHidden());
-		Collections.reverse(list);
-		return Collections.unmodifiableList(list);
+		return unmodifiableList(cards.getHidden());
 	}
 
 	public List<Card> getAllCards() {
-		List<Card> list = new ArrayList<>(getSize());
+		List<Card> list = new ArrayList<>(size());
 		list.addAll(getVisibleCards());
 		list.addAll(getHiddenCards());
-		return Collections.unmodifiableList(list);
+		return unmodifiableList(list);
 	}
 
 	public List<Card> removeCardsFrom(Card card) {
-		int index = getIndexOfCard(card);
+		int index = getVisibleCards().indexOf(card);
 		if (index == -1)
 			throw new CardNotFoundException(this, card);
 
@@ -92,56 +91,42 @@ public class MutableStack implements Stack, Serializable {
 	};
 
 	public Card removeTopCard() {
-		return cards.removeTop();
+		return cards.remove(0);
 	}
 
 	@Override
 	public Card getTopCard() {
-		return cards.getTop();
+		return cards.getVisible().get(0);
 	}
 
 	@Override
 	public Card getLastVisibleCard() {
-		return cards.getBottom();
+		return cards.getVisible().get(cards.getVisible().size() - 1);
 	}
 
 	public Card getLastCard() {
 		if (isEmpty())
 			return null;
-		return getAllCards().get(getSize() - 1);
-	}
-
-	@Override
-	public int getIndexOfCard(Card card) {
-		return cards.indexOf(card);
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return cards.isEmpty();
+		return getAllCards().get(size() - 1);
 	}
 
 	@Override
 	public int getNumberOfHiddenCards() {
-		return cards.getHiddenSize();
+		return cards.getHidden().size();
 	}
 
 	@Override
-	public int getNumberOfVisibleCards() {
-		return cards.getVisibleSize();
-	}
-
-	public boolean isCardVisible(Card card) {
-		return getVisibleCards().contains(card);
-	}
-
-	public boolean containsCard(Card card) {
-		return cards.contains(card);
+	public boolean isEmpty() {
+		return cards.getAll().isEmpty();
 	}
 
 	@Override
-	public int getSize() {
-		return cards.getSize();
+	public int size() {
+		return cards.getAll().size();
+	}
+
+	boolean contains(Card card) {
+		return cards.getAll().contains(card);
 	}
 
 	@Override

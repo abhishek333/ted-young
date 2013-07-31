@@ -109,7 +109,7 @@ public class MutableGame implements Game, Serializable {
 			HashSet<Card> cards = new HashSet<Card>();
 
 			// TODO: Should this be moved?
-			if (deck.getNumberOfVisibleCards() == 0)
+			if (deck.getVisibleCards().isEmpty())
 				deck.dealNextHand();
 
 			int deal = 0;
@@ -131,7 +131,7 @@ public class MutableGame implements Game, Serializable {
 
 		Stack firstEmptyStack = table.getFirstEmptyStack();
 
-		for (Stack source : table) {
+		for (MutableStack source : table) {
 			if (source.isEmpty())
 				continue;
 
@@ -142,7 +142,7 @@ public class MutableGame implements Game, Serializable {
 
 			for (Card card : source.getVisibleCards()) {
 				if (card.getDenomination() == Denomination.KING) {
-					if (source.getNumberOfHiddenCards() != 0 && firstEmptyStack != null)
+					if (source.getHiddenCards().size() != 0 && firstEmptyStack != null)
 						moves.add(new StackToStackMove(card, source, firstEmptyStack));
 				}
 				else {
@@ -209,9 +209,9 @@ public class MutableGame implements Game, Serializable {
 	@Override
 	public int getNumberOfCards() {
 		int count = 0;
-		count += foundation.getSize();
-		count += table.getSize();
-		count += deck.getSize();
+		count += foundation.size();
+		count += table.size();
+		count += deck.size();
 		return count;
 	}
 
@@ -308,18 +308,18 @@ public class MutableGame implements Game, Serializable {
 
 		int height = 0;
 		for (MutableStack stack : table)
-			if (stack.getPile().getSize() > height)
-				height = stack.getPile().getSize();
+			if (stack.getPile().getAll().size() > height)
+				height = stack.getPile().getAll().size();
 
 		for (int index = 0; index < height; index++) {
 			for (MutableStack stack : table) {
 				Pile pile = stack.getPile();
-				if (index >= pile.getSize()) {
+				if (index >= pile.getAll().size()) {
 					out.print("     ");
 					continue;
 				}
 
-				Card card = pile.getAll().get(index >= pile.getFirstVisibleCardIndex() ? pile.getSize() - (index - pile.getFirstVisibleCardIndex()) - 1 : index);
+				Card card = pile.getAll().get(index >= pile.getFirstVisibleCardIndex() ? pile.getAll().size() - (index - pile.getFirstVisibleCardIndex()) - 1 : index);
 				if (pile.getVisible().contains(card))
 					out.print(" " + card + "  ");
 				else

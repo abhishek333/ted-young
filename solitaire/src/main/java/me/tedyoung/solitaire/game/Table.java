@@ -16,6 +16,6 @@ public interface Table<S extends Stack> extends Iterable<S> {
 
 	S getFirstEmptyStack();
 
-	int getSize();
+	int size();
 
 }

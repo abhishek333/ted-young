@@ -1,5 +1,7 @@
 package me.tedyoung.solitaire.game;
 
+import static java.util.Collections.unmodifiableList;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +14,7 @@ public enum Card implements Comparable<Card>, Serializable {
 			Denomination.TWO, Suit.CLUBS), C3(Denomination.THREE, Suit.CLUBS), C4(Denomination.FOUR, Suit.CLUBS), C5(Denomination.FIVE, Suit.CLUBS), C6(Denomination.SIX, Suit.CLUBS), C7(Denomination.SEVEN, Suit.CLUBS), C8(Denomination.EIGHT, Suit.CLUBS), C9(Denomination.NINE, Suit.CLUBS), CT(Denomination.TEN, Suit.CLUBS), CJ(Denomination.JACK, Suit.CLUBS), CQ(Denomination.QUEEN, Suit.CLUBS), CK(Denomination.KING, Suit.CLUBS), DA(Denomination.ACE, Suit.DIAMONDS), D2(Denomination.TWO,
 			Suit.DIAMONDS), D3(Denomination.THREE, Suit.DIAMONDS), D4(Denomination.FOUR, Suit.DIAMONDS), D5(Denomination.FIVE, Suit.DIAMONDS), D6(Denomination.SIX, Suit.DIAMONDS), D7(Denomination.SEVEN, Suit.DIAMONDS), D8(Denomination.EIGHT, Suit.DIAMONDS), D9(Denomination.NINE, Suit.DIAMONDS), DT(Denomination.TEN, Suit.DIAMONDS), DJ(Denomination.JACK, Suit.DIAMONDS), DQ(Denomination.QUEEN, Suit.DIAMONDS), DK(Denomination.KING, Suit.DIAMONDS), UNKNOWN(null, null);
 
-	private static final List<Card> cards = Collections.unmodifiableList(Arrays.asList(values()).subList(0, 52));
+	private static final List<Card> cards = unmodifiableList(Arrays.asList(values()).subList(0, 52));
 
 	public static Card get(int index) {
 		return values()[index];
@@ -34,7 +36,7 @@ public enum Card implements Comparable<Card>, Serializable {
 		ArrayList<Card> list = new ArrayList<>(4);
 		for (Suit suit : Suit.values())
 			list.add(get(suit, denomination));
-		return list;
+		return unmodifiableList(list);
 	}
 
 	public static List<Card> getAll(Suit suit, Denomination from, Denomination to) {
@@ -45,7 +47,7 @@ public enum Card implements Comparable<Card>, Serializable {
 		ArrayList<Card> list = new ArrayList<>(52);
 		for (Suit suit : Suit.values())
 			list.addAll(getAll(suit, from, to));
-		return list;
+		return unmodifiableList(list);
 	}
 
 	private final Denomination denomination;

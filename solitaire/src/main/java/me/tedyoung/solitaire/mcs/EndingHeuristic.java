@@ -20,7 +20,7 @@ public class EndingHeuristic extends MonteCarloHeuristic {
 		if (game.isComplete())
 			return WON;
 
-		int score = game.getFoundation().getSize() * 10;
+		int score = game.getFoundation().size() * 10;
 
 		for (MutableStack stack : game.getTable()) {
 			List<Card> cards = new ArrayList<>(stack.getHiddenCards());
@@ -44,7 +44,7 @@ public class EndingHeuristic extends MonteCarloHeuristic {
 			}
 		}
 
-		score -= game.getDeck().getSize();
+		score -= game.getDeck().size();
 
 		for (Card card : game.getDeck().getThisAndSubsequentVisibleCardsAndVisibleCardsAfterFlip())
 			if (game.getFoundation().isPlayable(card) || game.getTable().isPlayable(card))

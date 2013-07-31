@@ -78,7 +78,7 @@ public class MutableFoundation implements Foundation, Serializable {
 	}
 
 	public List<Card> getCards() {
-		ArrayList<Card> cards = new ArrayList<Card>(getSize());
+		ArrayList<Card> cards = new ArrayList<Card>(size());
 		for (Suit suit : Suit.values())
 			cards.addAll(getCards(suit));
 		return cards;
@@ -123,17 +123,17 @@ public class MutableFoundation implements Foundation, Serializable {
 	}
 
 	@Override
-	public int getSize() {
+	public int size() {
 		int size = 0;
 
 		for (Suit suit : Suit.values())
-			size += getSize(suit);
+			size += size(suit);
 
 		return size;
 	}
 
 	@Override
-	public int getSize(Suit suit) {
+	public int size(Suit suit) {
 		if (isEmpty(suit))
 			return 0;
 		else

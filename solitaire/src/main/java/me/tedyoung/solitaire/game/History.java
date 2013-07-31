@@ -54,7 +54,7 @@ public class History {
 			SavedState state = iterator.next();
 			if (state.equals(other))
 				return iterator.nextIndex() - 1;
-			if (state.getDeck().getSize() != other.getDeck().getSize())
+			if (state.getDeck().size() != other.getDeck().size())
 				return -1;
 		}
 
