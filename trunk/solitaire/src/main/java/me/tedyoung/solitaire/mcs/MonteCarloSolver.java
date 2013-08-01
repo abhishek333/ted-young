@@ -1,12 +1,12 @@
 package me.tedyoung.solitaire.mcs;
 
+import static me.tedyoung.solitaire.mcs.MonteCarloHeuristic.LOST;
 import static me.tedyoung.solitaire.mcs.MonteCarloHeuristic.WON;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import me.tedyoung.solitaire.framework.Abort;
 import me.tedyoung.solitaire.framework.AbstractScoringPlayer;
 import me.tedyoung.solitaire.framework.ChainablePlayer;
 import me.tedyoung.solitaire.framework.GameResult;
@@ -22,14 +22,10 @@ import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
 public class MonteCarloSolver extends AbstractScoringPlayer implements ChainablePlayer {
 	protected String name = "MCS";
-
 	protected Lookahead lookahead;
 	protected Tester tester;
-
 	protected boolean revised;
-
 	protected List<MonteCarloHeuristic> heuristics = new ArrayList<>();
-
 	private GameCache<CacheEntry, Integer> cache = new GameCache<CacheEntry, Integer>(100_000, Integer.MIN_VALUE);
 
 	public MonteCarloSolver(Integer opening, Integer closing, PlayerRunControl control) {
@@ -107,14 +103,9 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 
 	@Override
 	public Move chooseMove(Game g, List<Move> moves) {
-		if (lookahead != null) {
-			MutableGame game = (MutableGame) g;
-			int mark = game.mark();
-			if (lookahead.playGame(game) == GameResult.WON)
-				throw new Abort.Complete();
-			game.restore(mark);
-		}
-
+		MutableGame game = (MutableGame) g;
+		if (lookahead != null)
+			lookahead.playGame(game);
 		return super.chooseMove(g, moves);
 	}
 
@@ -124,15 +115,16 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 		mutableGame.play(move);
 
 		// At 3/1, improved performance 163%, didn't affect success
-		int depth = heuristics.get(0).getEvaluationDepth();
-		if (moves.indexOf(move) > moves.size() / 2)
-			depth--;
-		if (depth < -1)
-			depth = -1;
-
+		int depth = weightedDepth(heuristics.get(0).getEvaluationDepth(), move, moves);
 		int score = score(mutableGame, 0, depth);
 		mutableGame.undo();
 		return score;
+	}
+
+	protected int weightedDepth(int depth, Move move, List<Move> moves) {
+		if (depth > -1 && moves.indexOf(move) > moves.size() / 2)
+			depth--;
+		return depth;
 	}
 
 	protected int score(MutableGame game, int heuristic, int depth) {
@@ -166,11 +158,11 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 			return value;
 
 		Move best = null;
-		int score = MonteCarloHeuristic.LOST;
+		int score = LOST;
 
 		for (Move move : moves) {
 			game.play(move);
-			int result = score(game, heuristic, depth - 1);
+			int result = score(game, heuristic, revised ? weightedDepth(depth - 1, move, moves) : depth - 1);
 			if (result > score) {
 				score = result;
 				best = move;
