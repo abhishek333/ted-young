@@ -38,7 +38,6 @@ public class Lookahead extends HeuristicPlayer {
 		this.randomness = randomness;
 
 		MonteCarloMoveSource source = new MonteCarloMoveSource();
-		source.setCheckForDeadLocks(false);
 		setMoveSource(source);
 	}
 

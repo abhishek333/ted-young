@@ -60,7 +60,6 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 		setRunControl(control);
 
 		MonteCarloMoveSource source = new MonteCarloMoveSource(revised);
-		source.setCheckForDeadLocks(false);
 		setMoveSource(source);
 
 		if (maximumHeuristicEvaluationDepth() == -1)
@@ -68,9 +67,8 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 		else
 			setLookahead(new Lookahead(new ClosingHeuristic(-1), new Lookahead(new AdvancedMoveHeuristic(), null)));
 
-		if (revised)
-			if (totalHeuristicEvaluationDepth() > 3)
-				setTester(new DeadlockTester(control));
+		if (totalHeuristicEvaluationDepth() > 3)
+			setTester(new DeadlockTester(control));
 	}
 
 	private int maximumHeuristicEvaluationDepth() {
@@ -90,7 +88,6 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 
 	@Override
 	public void chainedTo(Player player) {
-		player.setRunControl(this.getRunControl());
 		if (player instanceof MonteCarloSolver) {
 			MonteCarloSolver that = (MonteCarloSolver) player;
 			that.cache = this.cache;
@@ -127,13 +124,13 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 		mutableGame.play(move);
 
 		// At 3/1, improved performance 163%, didn't affect success
-		int offset = 0;
+		int depth = heuristics.get(0).getEvaluationDepth();
 		if (moves.indexOf(move) > moves.size() / 2)
-			offset = 1;
-		if (offset < -1)
-			offset = -1;
+			depth--;
+		if (depth < -1)
+			depth = -1;
 
-		int score = score(mutableGame, 0, heuristics.get(0).getEvaluationDepth() - offset);
+		int score = score(mutableGame, 0, depth);
 		mutableGame.undo();
 		return score;
 	}
@@ -222,6 +219,8 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 		super.setRunControl(control);
 		if (this.lookahead != null)
 			this.lookahead.setRunControl(control);
+		if (this.tester != null)
+			this.tester.setRunControl(control);
 	}
 
 	public void setHeuristics(List<MonteCarloHeuristic> heuristics) {
