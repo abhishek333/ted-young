@@ -167,7 +167,7 @@ public class Candidate extends Dependency {
 				MutableStack stack = game.getTable().getStackContainingCard(card);
 				cards = stack.getAllCards();
 				ArrayList<Candidate> dependencies = new ArrayList<>(candidates.getAll(cards.subList(0, cards.indexOf(card))));
-				if (inclusive && candidates.containsKey(card))
+				if (inclusive)
 					dependencies.add(candidates.get(card));
 				if (dependencies.isEmpty())
 					return SUCCEED;

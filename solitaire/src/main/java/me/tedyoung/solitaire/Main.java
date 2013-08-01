@@ -4,18 +4,17 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import me.tedyoung.solitaire.framework.PlayerTestFactory;
 import me.tedyoung.solitaire.framework.RandomGameSource;
 import me.tedyoung.solitaire.framework.TestEngine;
-import me.tedyoung.solitaire.framework.TesterTestFactory;
 import me.tedyoung.solitaire.mcs.MonteCarloSolver;
-import me.tedyoung.solitaire.tester.DeadlockTester;
 import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
 public class Main {
 	public static void main(String... arguments) throws InterruptedException, ExecutionException, IOException {
 		TestEngine engine = new TestEngine(8);
-		// PlayerTestFactory factory = new PlayerTestFactory();
-		TesterTestFactory factory = new TesterTestFactory();
+		PlayerTestFactory factory = new PlayerTestFactory();
+		// TesterTestFactory factory = new TesterTestFactory();
 		engine.add(factory);
 
 		// engine.setTranscriber(new FilesystemTranscriber("1000 Open 5 Close 1 TO 8 hrs", "../.."));
@@ -38,18 +37,18 @@ public class Main {
 
 		PlayerRunControl control = new PlayerRunControl(4, TimeUnit.HOURS, 5000);
 
-		factory.add(new MonteCarloSolver(1, 0, control, false));
-		// factory.add(new MonteCarloSolver(3, 2, control, true));
+		factory.add(new MonteCarloSolver(2, 1, control, false));
+		factory.add(new MonteCarloSolver(2, 1, control, true));
 
 		// factory.add(new MonteCarloSolver(null, 3, control, false));
 		// factory.add(new MonteCarloSolver(3, 0, control, true));
 
-		factory.add(new DeadlockTester(control, true));
+		// factory.add(new DeadlockTester(control, true));
 		// factory.add(new DeadlockTester(control, false));
 
 		// factory.add(new ChainedPlayer("Chained -/3, 3/3", control, new MonteCarloSolver(null, 3, null), new MonteCarloSolver(3, 3, null)));
 
-		factory.add(new AdvancedPriorityPlayer());
+		// factory.add(new AdvancedPriorityPlayer());
 
 		engine.run();
 

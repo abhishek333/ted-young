@@ -36,32 +36,27 @@ public class Lookahead extends HeuristicPlayer {
 		super(heuristic);
 		this.lookahead = lookahead;
 		this.randomness = randomness;
+		setMoveSource(new MonteCarloMoveSource());
+	}
 
-		MonteCarloMoveSource source = new MonteCarloMoveSource();
-		setMoveSource(source);
+	@Override
+	public GameResult playGame(Game g) {
+		MutableGame game = (MutableGame) g;
+		int mark = game.mark();
+		GameResult result = super.playGame(game);
+		if (result == GameResult.WON)
+			throw new Abort();
+		game.restore(mark);
+		return result;
 	}
 
 	@Override
 	public Move chooseMove(Game g, List<Move> moves) {
 		MutableGame game = (MutableGame) g;
-
-		if (lookahead != null) {
-			int mark = game.mark();
-			if (lookahead.playGame(game) == GameResult.WON)
-				throw new Abort();
-			game.restore(mark);
-		}
-
+		if (lookahead != null)
+			lookahead.playGame(game);
 		Move move = super.chooseMove(game, moves);
-
-		SavedState state = game.getSavedState();
-		Set<Move> previouslyAttemptedMoves = visited.get(game, state);
-		if (previouslyAttemptedMoves == null) {
-			previouslyAttemptedMoves = new HashSet<>();
-			visited.set(game, state, previouslyAttemptedMoves);
-		}
-		previouslyAttemptedMoves.add(move);
-
+		visited.get(game, game.getSavedState()).add(move);
 		return move;
 	}
 
@@ -70,10 +65,9 @@ public class Lookahead extends HeuristicPlayer {
 		List<Move> moves = super.getMoves(game);
 
 		Set<Move> previouslyAttemptedMoves = visited.get(game, SavedState.proxy((MutableGame) game));
-		if (previouslyAttemptedMoves != null)
-			for (Move move : previouslyAttemptedMoves)
-				if (random() < randomness)
-					moves.remove(move);
+		for (Move move : previouslyAttemptedMoves)
+			if (random() < randomness)
+				moves.remove(move);
 
 		return moves;
 	}
