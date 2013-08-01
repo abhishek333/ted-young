@@ -3,8 +3,8 @@ package me.tedyoung.solitaire.mcs;
 import java.util.Comparator;
 import java.util.List;
 
-import me.tedyoung.solitaire.AdvancedPriorityPlayer;
 import me.tedyoung.solitaire.framework.BasicMoveSource;
+import me.tedyoung.solitaire.framework.heuristic.AdvancedMoveHeuristic;
 import me.tedyoung.solitaire.game.Card;
 import me.tedyoung.solitaire.game.Game;
 import me.tedyoung.solitaire.game.MutableGame;
@@ -15,9 +15,6 @@ import me.tedyoung.solitaire.game.move.StackToStackMove;
 import me.tedyoung.solitaire.utilities.CachingComparator;
 
 public class MonteCarloMoveSource extends BasicMoveSource {
-	// private boolean checkForDeadLocks = true;
-	// private GameCache<SavedState, Boolean> deadlockCache = new GameCache<>(100_000);
-
 	@SuppressWarnings("unused")
 	private boolean revised;
 
@@ -55,23 +52,6 @@ public class MonteCarloMoveSource extends BasicMoveSource {
 
 		}
 
-		// if (checkForDeadLocks) {
-		// if (move instanceof DeckToStackMove || move instanceof StackToStackMove || move instanceof FoundationToStackMove) {
-		// if (game.getTable().getNumberOfHiddenCards() > 0) {
-		// SavedState state = new SavedState(game, false);
-		// Boolean deadlock = deadlockCache.getIfPresent(game, state);
-		// if (deadlock == null) {
-		// game.play(move);
-		// deadlock = !new DeadlockFinder().isSolvable(game);
-		// game.undo();
-		// deadlockCache.set(game, state, deadlock);
-		// }
-		// if (deadlock)
-		// return true;
-		// }
-		// }
-		// }
-
 		return false;
 	}
 
@@ -80,7 +60,7 @@ public class MonteCarloMoveSource extends BasicMoveSource {
 		return new MoveComparator(game);
 	}
 
-	private static final AdvancedPriorityPlayer player = new AdvancedPriorityPlayer();
+	private static final AdvancedMoveHeuristic HEURISTIC = new AdvancedMoveHeuristic();
 
 	private static class MoveComparator extends CachingComparator<Move> {
 		private final Game game;
@@ -91,11 +71,7 @@ public class MonteCarloMoveSource extends BasicMoveSource {
 
 		@Override
 		protected int valueOf(Move move) {
-			return -player.score(move, game, null);
+			return -HEURISTIC.valueOf(move, game);
 		}
-	}
-
-	public void setCheckForDeadLocks(boolean checkForDeadLocks) {
-		// this.checkForDeadLocks = checkForDeadLocks;
 	}
 }
