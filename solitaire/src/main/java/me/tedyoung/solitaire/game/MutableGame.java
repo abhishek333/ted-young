@@ -90,6 +90,10 @@ public class MutableGame implements Game, Serializable {
 		return history.contains(SavedState.proxy(this));
 	}
 
+	public StateKey getStateKey() {
+		return new StateKey(this);
+	}
+
 	private List<Move> getMovesFromDeck(Card card, int deals, boolean flip) {
 		ArrayList<Move> moves = new ArrayList<Move>();
 

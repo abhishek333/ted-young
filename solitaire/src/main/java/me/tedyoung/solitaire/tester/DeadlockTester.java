@@ -30,7 +30,7 @@ public class DeadlockTester extends AbstractTester {
 
 		MutableGame game = (MutableGame) g;
 
-		if (!PLAYABILITY_TESTER.isSolvable(game))
+		if (!PLAYABILITY_TESTER.isSolvable(game, revised))
 			return false;
 
 		CandidateMap candidates = new CandidateMap();
