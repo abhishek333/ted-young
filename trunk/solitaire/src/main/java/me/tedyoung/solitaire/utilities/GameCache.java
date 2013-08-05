@@ -20,17 +20,33 @@ public class GameCache<K, V> {
 
 	public GameCache(final int maximumCapacity, final V defaultValue) {
 		this.defaultValue = defaultValue;
-		this.map = new GameLocal<LoadingCache<K, V>>() {
-			@Override
-			protected LoadingCache<K, V> defaultValue() {
-				return CacheBuilder.newBuilder().maximumSize(maximumCapacity).build(new CacheLoader<K, V>() {
-					@Override
-					public V load(K key) throws Exception {
-						return GameCache.this.defaultValue();
-					}
-				});
-			}
-		};
+
+		if (maximumCapacity == Integer.MAX_VALUE) {
+			this.map = new GameLocal<LoadingCache<K, V>>() {
+				@Override
+				protected LoadingCache<K, V> defaultValue() {
+					return CacheBuilder.newBuilder().concurrencyLevel(1).build(new CacheLoader<K, V>() {
+						@Override
+						public V load(K key) throws Exception {
+							return GameCache.this.defaultValue();
+						}
+					});
+				}
+			};
+		}
+		else {
+			this.map = new GameLocal<LoadingCache<K, V>>() {
+				@Override
+				protected LoadingCache<K, V> defaultValue() {
+					return CacheBuilder.newBuilder().maximumSize(maximumCapacity).concurrencyLevel(1).build(new CacheLoader<K, V>() {
+						@Override
+						public V load(K key) throws Exception {
+							return GameCache.this.defaultValue();
+						}
+					});
+				}
+			};
+		}
 	}
 
 	public LoadingCache<K, V> get(Game game) {
