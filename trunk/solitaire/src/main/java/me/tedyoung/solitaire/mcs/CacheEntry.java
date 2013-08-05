@@ -1,14 +1,14 @@
 package me.tedyoung.solitaire.mcs;
 
 import me.tedyoung.solitaire.framework.heuristic.StateHeuristic;
-import me.tedyoung.solitaire.game.SavedState;
+import me.tedyoung.solitaire.game.StateKey;
 
 public class CacheEntry {
-	private final SavedState state;
+	private final StateKey state;
 	private final StateHeuristic heuristic;
 	private final int level;
 
-	public CacheEntry(SavedState state, MonteCarloHeuristic heuristic, int level) {
+	public CacheEntry(StateKey state, MonteCarloHeuristic heuristic, int level) {
 		this.state = state;
 		this.heuristic = heuristic;
 		this.level = level;

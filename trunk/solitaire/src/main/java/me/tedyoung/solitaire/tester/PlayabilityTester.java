@@ -12,6 +12,10 @@ import me.tedyoung.solitaire.game.MutableStack;
 public class PlayabilityTester extends AbstractTester {
 	@Override
 	public boolean isSolvable(Game g) {
+		return isSolvable(g, false);
+	}
+
+	public boolean isSolvable(Game g, boolean revised) {
 		MutableGame game = (MutableGame) g;
 
 		HashSet<Card> stackCards = new HashSet<>();
@@ -42,4 +46,5 @@ public class PlayabilityTester extends AbstractTester {
 	public String getName() {
 		return "Playable";
 	}
+
 }

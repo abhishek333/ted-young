@@ -10,6 +10,10 @@ public class GameCache<K, V> {
 	private GameLocal<LoadingCache<K, V>> map;
 	private V defaultValue;
 
+	public GameCache() {
+		this(Integer.MAX_VALUE);
+	}
+
 	public GameCache(int maximumCapacity) {
 		this(maximumCapacity, null);
 	}
@@ -27,6 +31,10 @@ public class GameCache<K, V> {
 				});
 			}
 		};
+	}
+
+	public LoadingCache<K, V> get(Game game) {
+		return map.get(game);
 	}
 
 	public V get(Game game, K key) {

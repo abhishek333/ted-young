@@ -32,13 +32,21 @@ public class PlayerRunControl {
 
 	public void verifyWihtoutYield(Game game) {
 		if (maximumTime > 0)
-			if (stopwatch.get(game).elapsed(TimeUnit.MILLISECONDS) > maximumTime)
+			if (getElapsedTime(game) > maximumTime)
 				throw new Abort.Timeout();
 
 		if (maximumMoves > 0)
-			if (((MutableGame) game).getNumberOfMovesPlayed() > maximumMoves)
+			if (getNumberOfMoves(game) > maximumMoves)
 				throw new Abort.Distance();
 
+	}
+
+	public int getNumberOfMoves(Game game) {
+		return ((MutableGame) game).getNumberOfMovesPlayed();
+	}
+
+	public long getElapsedTime(Game game) {
+		return stopwatch.get(game).elapsed(TimeUnit.MILLISECONDS);
 	}
 
 	public void verify(Game game) {
