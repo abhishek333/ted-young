@@ -56,7 +56,7 @@ public class MutableGame implements Game, Serializable {
 		move.apply(this);
 	}
 
-	public SavedState getSavedState() {
+	private SavedState getSavedState() {
 		return new SavedState(this);
 	}
 

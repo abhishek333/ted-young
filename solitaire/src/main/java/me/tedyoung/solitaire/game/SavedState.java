@@ -1,6 +1,6 @@
 package me.tedyoung.solitaire.game;
 
-public class SavedState {
+class SavedState {
 	private MutableDeck deck;
 
 	private MutableFoundation foundation;

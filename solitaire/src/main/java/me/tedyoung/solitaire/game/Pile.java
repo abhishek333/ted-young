@@ -27,7 +27,7 @@ public class Pile implements Serializable {
 		this.cards = pile.cards;
 		this.firstVisibleCardIndex = pile.firstVisibleCardIndex;
 		this.minimumVisible = pile.minimumVisible;
-		this.copyOnWrite = pile.copyOnWrite = true;
+		pile.copyOnWrite = true;
 	}
 
 	private void prepareForUpdate() {
@@ -35,6 +35,7 @@ public class Pile implements Serializable {
 			ArrayList<Card> cards = this.cards;
 			this.cards = new ArrayList<>(26);
 			this.cards.addAll(cards);
+			copyOnWrite = false;
 		}
 		this.hashCode = null;
 	}

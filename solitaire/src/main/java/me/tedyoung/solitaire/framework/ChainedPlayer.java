@@ -21,9 +21,9 @@ public class ChainedPlayer extends AbstractPlayer {
 		for (Player player : players)
 			player.setRunControl(control);
 
-		for (int index = players.length - 1; index > 0; index--)
-			if (players[index - 1] instanceof ChainablePlayer)
-				((ChainablePlayer) players[index - 1]).chainedTo(players[index]);
+		for (int index = 0; index < players.length - 1; index++)
+			if (players[index] instanceof ChainablePlayer)
+				((ChainablePlayer) players[index]).chainedTo(players[index + 1]);
 
 	}
 
@@ -34,8 +34,8 @@ public class ChainedPlayer extends AbstractPlayer {
 		for (Player player : players) {
 			((MutableGame) game).reset();
 			result = player.playGame(game);
-			if (result == GameResult.WON)
-				return GameResult.WON;
+			if (result != GameResult.LOST)
+				return result;
 		}
 
 		return result;
@@ -43,7 +43,7 @@ public class ChainedPlayer extends AbstractPlayer {
 
 	@Override
 	public String getName() {
-		return name;
+		return name == null ? "Chained: " + players.get(players.size() - 1).getName() : name;
 	}
 
 }
