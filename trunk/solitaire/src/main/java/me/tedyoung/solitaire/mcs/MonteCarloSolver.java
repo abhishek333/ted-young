@@ -27,7 +27,7 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 	protected boolean revised;
 	protected boolean chained;
 	protected List<MonteCarloHeuristic> heuristics = new ArrayList<>();
-	private GameCache<CacheEntry, Integer> cache = new GameCache<CacheEntry, Integer>(2_000_000, Integer.MIN_VALUE);
+	private GameCache<CacheEntry, Integer> cache = new GameCache<CacheEntry, Integer>(1_000_000, Integer.MIN_VALUE);
 
 	public MonteCarloSolver(Integer opening, Integer closing, PlayerRunControl control) {
 		this(opening, closing, control, false);

@@ -1,39 +1,38 @@
 package me.tedyoung.solitaire.game;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.ListIterator;
 
 public class StateKey {
-	private byte[] value = new byte[52];
+	private byte[] bytes = new byte[52];
 	private int hash = 0;
 
 	public StateKey(MutableGame game) {
-		write(game.getDeck().getAllCards());
-		write(game.getDeck().getHiddenCards().size());
+		int offset = 1;
+
+		for (ListIterator<Card> iterator = game.getDeck().getVisibleCards().listIterator(); iterator.hasNext();)
+			bytes[iterator.next().ordinal()] = (byte) (offset + iterator.nextIndex() - 1);
+
+		offset = 25;
+
+		for (ListIterator<Card> iterator = game.getDeck().getHiddenCards().listIterator(); iterator.hasNext();)
+			bytes[iterator.next().ordinal()] = (byte) (offset + iterator.nextIndex() - 1);
+
+		offset = 49;
 
 		for (MutableStack stack : game.getTable()) {
-			write(stack.getAllCards());
-			write(stack.getHiddenCards().size());
+			for (ListIterator<Card> iterator = stack.getVisibleCards().listIterator(); iterator.hasNext();)
+				bytes[iterator.next().ordinal()] = (byte) (offset + iterator.nextIndex() - 1);
+
+			offset += 13;
+
+			for (ListIterator<Card> iterator = stack.getHiddenCards().listIterator(); iterator.hasNext();)
+				bytes[iterator.next().ordinal()] = (byte) (offset + iterator.nextIndex() - 1);
+
+			offset += stack.getIndex();
 		}
 
-		for (Card card : game.getFoundation().getTopCards())
-			write(card);
-
-		hash = Arrays.hashCode(value);
-	}
-
-	private void write(List<Card> cards) {
-		write(cards.size());
-		for (Card card : cards)
-			write(card);
-	}
-
-	private void write(Card card) {
-		write(card.ordinal());
-	}
-
-	private void write(int value) {
-		this.value[hash++] = (byte) value;
+		hash = Arrays.hashCode(bytes);
 	}
 
 	@Override
@@ -50,7 +49,7 @@ public class StateKey {
 		if (getClass() != obj.getClass())
 			return false;
 		StateKey other = (StateKey) obj;
-		if (!Arrays.equals(value, other.value))
+		if (!Arrays.equals(bytes, other.bytes))
 			return false;
 		return true;
 	}
