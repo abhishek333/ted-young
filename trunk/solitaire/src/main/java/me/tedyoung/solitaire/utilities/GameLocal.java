@@ -16,7 +16,7 @@ public class GameLocal<T> {
 
 	public GameLocal(final T defaultValue) {
 		this.defaultValue = defaultValue;
-		this.map = CacheBuilder.newBuilder().weakKeys().concurrencyLevel(10).build(new CacheLoader<Game, T>() {
+		this.map = CacheBuilder.newBuilder().initialCapacity(80).weakKeys().concurrencyLevel(10).build(new CacheLoader<Game, T>() {
 			@Override
 			public T load(Game game) throws Exception {
 				return defaultValue();

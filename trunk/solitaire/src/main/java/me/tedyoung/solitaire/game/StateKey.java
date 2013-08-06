@@ -4,26 +4,26 @@ import java.util.Arrays;
 import java.util.List;
 
 public class StateKey {
-	private static final int SEPERATOR = 0xFF;
-
-	private byte[] value = new byte[52 + 8 * 2];
-	private int index = 0;
+	private byte[] value = new byte[52];
+	private int hash = 0;
 
 	public StateKey(MutableGame game) {
-		write(game.getDeck().getHiddenCards().size());
 		write(game.getDeck().getAllCards());
-		write(SEPERATOR);
+		write(game.getDeck().getHiddenCards().size());
 
 		for (MutableStack stack : game.getTable()) {
-			write(stack.getHiddenCards().size());
 			write(stack.getAllCards());
-			write(SEPERATOR);
+			write(stack.getHiddenCards().size());
 		}
 
-		write(game.getFoundation().getTopCards());
+		for (Card card : game.getFoundation().getTopCards())
+			write(card);
+
+		hash = Arrays.hashCode(value);
 	}
 
 	private void write(List<Card> cards) {
+		write(cards.size());
 		for (Card card : cards)
 			write(card);
 	}
@@ -33,15 +33,12 @@ public class StateKey {
 	}
 
 	private void write(int value) {
-		this.value[index++] = (byte) value;
+		this.value[hash++] = (byte) value;
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(value);
-		return result;
+		return hash;
 	}
 
 	@Override

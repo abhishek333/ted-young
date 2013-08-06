@@ -20,33 +20,17 @@ public class GameCache<K, V> {
 
 	public GameCache(final int maximumCapacity, final V defaultValue) {
 		this.defaultValue = defaultValue;
-
-		if (maximumCapacity == Integer.MAX_VALUE) {
-			this.map = new GameLocal<LoadingCache<K, V>>() {
-				@Override
-				protected LoadingCache<K, V> defaultValue() {
-					return CacheBuilder.newBuilder().concurrencyLevel(1).build(new CacheLoader<K, V>() {
-						@Override
-						public V load(K key) throws Exception {
-							return GameCache.this.defaultValue();
-						}
-					});
-				}
-			};
-		}
-		else {
-			this.map = new GameLocal<LoadingCache<K, V>>() {
-				@Override
-				protected LoadingCache<K, V> defaultValue() {
-					return CacheBuilder.newBuilder().maximumSize(maximumCapacity).concurrencyLevel(1).build(new CacheLoader<K, V>() {
-						@Override
-						public V load(K key) throws Exception {
-							return GameCache.this.defaultValue();
-						}
-					});
-				}
-			};
-		}
+		this.map = new GameLocal<LoadingCache<K, V>>() {
+			@Override
+			protected LoadingCache<K, V> defaultValue() {
+				return CacheBuilder.newBuilder().initialCapacity(10_000).maximumSize(maximumCapacity).concurrencyLevel(1).build(new CacheLoader<K, V>() {
+					@Override
+					public V load(K key) throws Exception {
+						return GameCache.this.defaultValue();
+					}
+				});
+			}
+		};
 	}
 
 	public LoadingCache<K, V> get(Game game) {
@@ -74,7 +58,7 @@ public class GameCache<K, V> {
 	}
 
 	public void clear(Game game) {
-		map.get(game);
+		map.clear(game);
 	}
 
 	protected V defaultValue() {
