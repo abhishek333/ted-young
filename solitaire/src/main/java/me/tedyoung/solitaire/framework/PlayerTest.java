@@ -33,6 +33,7 @@ public class PlayerTest implements PausableTest {
 
 	@Override
 	public void cleanup() {
+		player.cleanup(game);
 		game = null;
 	}
 

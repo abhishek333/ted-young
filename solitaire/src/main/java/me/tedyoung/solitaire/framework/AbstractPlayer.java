@@ -6,11 +6,11 @@ import me.tedyoung.solitaire.utilities.PlayerRunControl;
 public abstract class AbstractPlayer implements Player {
 	private PlayerRunControl control = new PlayerRunControl();
 
-	protected void startGame(Game game) {
+	protected void start(Game game) {
 		control.start(game);
 	}
 
-	protected void endGame(Game game) {
+	protected void stop(Game game) {
 		control.stop(game);
 	}
 
@@ -35,5 +35,9 @@ public abstract class AbstractPlayer implements Player {
 	@Override
 	public void setRunControl(PlayerRunControl control) {
 		this.control = control;
+	}
+
+	@Override
+	public void cleanup(Game game) {
 	}
 }

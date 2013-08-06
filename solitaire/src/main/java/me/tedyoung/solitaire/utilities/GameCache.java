@@ -23,7 +23,7 @@ public class GameCache<K, V> {
 		this.map = new GameLocal<LoadingCache<K, V>>() {
 			@Override
 			protected LoadingCache<K, V> defaultValue() {
-				return CacheBuilder.newBuilder().initialCapacity(10_000).maximumSize(maximumCapacity).concurrencyLevel(1).build(new CacheLoader<K, V>() {
+				return CacheBuilder.newBuilder().maximumSize(maximumCapacity).concurrencyLevel(1).build(new CacheLoader<K, V>() {
 					@Override
 					public V load(K key) throws Exception {
 						return GameCache.this.defaultValue();

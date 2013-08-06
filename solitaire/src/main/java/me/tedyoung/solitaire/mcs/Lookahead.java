@@ -22,7 +22,7 @@ public class Lookahead extends HeuristicPlayer {
 	private final Lookahead lookahead;
 	private final double randomness;
 
-	private final GameCache<StateKey, Set<Integer>> visited = new GameCache<StateKey, Set<Integer>>(50_000) {
+	private final GameCache<StateKey, Set<Integer>> visited = new GameCache<StateKey, Set<Integer>>(500_000) {
 		@Override
 		protected Set<Integer> defaultValue() {
 			return new HashSet<>();
@@ -41,10 +41,10 @@ public class Lookahead extends HeuristicPlayer {
 	}
 
 	@Override
-	public void endGame(Game game) {
+	public void cleanup(Game game) {
 		visited.clear(game);
 		if (lookahead != null)
-			lookahead.endGame(game);
+			lookahead.cleanup(game);
 	}
 
 	@Override

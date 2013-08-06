@@ -27,7 +27,8 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 	protected boolean revised;
 	protected boolean chained;
 	protected List<MonteCarloHeuristic> heuristics = new ArrayList<>();
-	private GameCache<CacheEntry, Integer> cache = new GameCache<CacheEntry, Integer>(1_000_000, Integer.MIN_VALUE);
+	private GameCache<CacheEntry, Integer> longCache = new GameCache<CacheEntry, Integer>(1_000_000, Integer.MIN_VALUE);
+	private GameCache<CacheEntry, Integer> shortCache = new GameCache<CacheEntry, Integer>(1_000_000, Integer.MIN_VALUE);
 
 	public MonteCarloSolver(Integer opening, Integer closing, PlayerRunControl control) {
 		this(opening, closing, control, false);
@@ -87,7 +88,8 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 	public void chainedTo(Player player) {
 		if (player instanceof MonteCarloSolver) {
 			MonteCarloSolver that = (MonteCarloSolver) player;
-			that.cache = this.cache;
+			that.longCache = this.longCache;
+			that.shortCache = this.shortCache;
 			if (tester != null) {
 				that.tester = tester;
 				this.tester = null;
@@ -97,11 +99,15 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 	}
 
 	@Override
-	protected void endGame(Game game) {
-		if (!chained)
-			cache.clear(game);
+	public void cleanup(Game game) {
+		if (!chained) {
+			longCache.clear(game);
+			shortCache.clear(game);
+		}
+		if (tester != null)
+			tester.cleanup(game);
 		if (lookahead != null)
-			lookahead.endGame(game);
+			lookahead.cleanup(game);
 	}
 
 	@Override
@@ -139,6 +145,7 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 	protected int score(MutableGame game, int heuristic, int depth) {
 		if (depth > -1) {
 			CacheEntry node = new CacheEntry(game.getStateKey(), heuristics.get(heuristic), depth);
+			GameCache<CacheEntry, Integer> cache = depth == 0 ? shortCache : longCache;
 			Integer score = cache.get(game, node);
 			if (score > Integer.MIN_VALUE)
 				return score;

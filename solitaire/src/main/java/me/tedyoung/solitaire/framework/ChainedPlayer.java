@@ -42,6 +42,12 @@ public class ChainedPlayer extends AbstractPlayer {
 	}
 
 	@Override
+	public void cleanup(Game game) {
+		for (Player player : players)
+			player.cleanup(game);
+	}
+
+	@Override
 	public String getName() {
 		return name == null ? "Chained: " + players.get(players.size() - 1).getName() : name;
 	}
