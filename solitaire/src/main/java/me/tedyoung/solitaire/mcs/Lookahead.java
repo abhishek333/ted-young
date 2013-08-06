@@ -3,6 +3,7 @@ package me.tedyoung.solitaire.mcs;
 import static java.lang.Math.random;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -21,9 +22,9 @@ public class Lookahead extends HeuristicPlayer {
 	private final Lookahead lookahead;
 	private final double randomness;
 
-	private final GameCache<StateKey, Set<Move>> visited = new GameCache<StateKey, Set<Move>>(Integer.MAX_VALUE) {
+	private final GameCache<StateKey, Set<Integer>> visited = new GameCache<StateKey, Set<Integer>>(100_000) {
 		@Override
-		protected Set<Move> defaultValue() {
+		protected Set<Integer> defaultValue() {
 			return new HashSet<>();
 		}
 	};
@@ -37,6 +38,13 @@ public class Lookahead extends HeuristicPlayer {
 		this.lookahead = lookahead;
 		this.randomness = randomness;
 		setMoveSource(new MonteCarloMoveSource());
+	}
+
+	@Override
+	public void endGame(Game game) {
+		visited.clear(game);
+		if (lookahead != null)
+			lookahead.endGame(game);
 	}
 
 	@Override
@@ -56,18 +64,18 @@ public class Lookahead extends HeuristicPlayer {
 		if (lookahead != null)
 			lookahead.playGame(game);
 		Move move = super.chooseMove(game, moves);
-		visited.get(game, game.getStateKey()).add(move);
+		visited.get(game, game.getStateKey()).add(move.hashCode());
 		return move;
 	}
 
 	@Override
 	public List<Move> getMoves(Game game) {
 		List<Move> moves = super.getMoves(game);
+		Set<Integer> previouslyAttemptedMoves = visited.get(game, ((MutableGame) game).getStateKey());
 
-		Set<Move> previouslyAttemptedMoves = visited.get(game, ((MutableGame) game).getStateKey());
-		for (Move move : previouslyAttemptedMoves)
-			if (random() < randomness)
-				moves.remove(move);
+		for (Iterator<Move> iterator = moves.iterator(); iterator.hasNext();)
+			if (previouslyAttemptedMoves.contains(iterator.next().hashCode()) && random() < randomness)
+				iterator.remove();
 
 		return moves;
 	}

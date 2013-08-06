@@ -25,16 +25,9 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 	protected Lookahead lookahead;
 	protected Tester tester;
 	protected boolean revised;
+	protected boolean chained;
 	protected List<MonteCarloHeuristic> heuristics = new ArrayList<>();
-	private GameCache<CacheEntry, Integer> cache = new GameCache<CacheEntry, Integer>(Integer.MAX_VALUE, Integer.MIN_VALUE);
-
-	// @Override
-	// protected void endGame(Game game) {
-	// CacheStats stats = cache.get(game).stats();
-	// System.out.println(stats.evictionCount() + "   " + stats.hitRate() * 100 + "   " + getRunControl().getElapsedTime(game) / 1000);
-	//
-	// System.out.println();
-	// };
+	private GameCache<CacheEntry, Integer> cache = new GameCache<CacheEntry, Integer>(2_000_000, Integer.MIN_VALUE);
 
 	public MonteCarloSolver(Integer opening, Integer closing, PlayerRunControl control) {
 		this(opening, closing, control, false);
@@ -98,8 +91,17 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 			if (tester != null) {
 				that.tester = tester;
 				this.tester = null;
+				this.chained = true;
 			}
 		}
+	}
+
+	@Override
+	protected void endGame(Game game) {
+		if (!chained)
+			cache.clear(game);
+		if (lookahead != null)
+			lookahead.endGame(game);
 	}
 
 	@Override
@@ -137,7 +139,6 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 	protected int score(MutableGame game, int heuristic, int depth) {
 		if (depth > -1) {
 			CacheEntry node = new CacheEntry(game.getStateKey(), heuristics.get(heuristic), depth);
-
 			Integer score = cache.get(game, node);
 			if (score > Integer.MIN_VALUE)
 				return score;
