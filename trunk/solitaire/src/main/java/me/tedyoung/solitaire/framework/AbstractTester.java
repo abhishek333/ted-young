@@ -36,4 +36,8 @@ public abstract class AbstractTester implements Tester {
 	public void setRunControl(PlayerRunControl control) {
 		this.control = control;
 	}
+
+	@Override
+	public void cleanup(Game game) {
+	}
 }

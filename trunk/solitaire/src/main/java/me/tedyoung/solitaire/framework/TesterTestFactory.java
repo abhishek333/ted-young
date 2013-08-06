@@ -44,6 +44,11 @@ public class TesterTestFactory extends PlayerTestFactory {
 				public void setRunControl(PlayerRunControl control) {
 					tester.setRunControl(control);
 				}
+
+				@Override
+				public void cleanup(Game game) {
+					tester.cleanup(game);
+				}
 			};
 			super.add(player);
 		}
@@ -85,6 +90,11 @@ public class TesterTestFactory extends PlayerTestFactory {
 				@Override
 				public void setRunControl(PlayerRunControl control) {
 					player.setRunControl(control);
+				}
+
+				@Override
+				public void cleanup(Game game) {
+					player.cleanup(game);
 				}
 			};
 			super.add(inverted);

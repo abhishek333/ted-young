@@ -13,4 +13,6 @@ public interface Player {
 	void resume(Game game);
 
 	void setRunControl(PlayerRunControl control);
+
+	void cleanup(Game game);
 }
