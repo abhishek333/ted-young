@@ -24,7 +24,6 @@ public class ChainedPlayer extends AbstractPlayer {
 		for (int index = 0; index < players.length - 1; index++)
 			if (players[index] instanceof ChainablePlayer)
 				((ChainablePlayer) players[index]).chainedTo(players[index + 1]);
-
 	}
 
 	@Override

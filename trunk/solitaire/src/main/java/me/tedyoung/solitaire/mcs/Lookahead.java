@@ -22,19 +22,19 @@ public class Lookahead extends HeuristicPlayer {
 	private final Lookahead lookahead;
 	private final double randomness;
 
-	private final GameCache<StateKey, Set<Integer>> visited = new GameCache<StateKey, Set<Integer>>(500_000) {
+	private final GameCache<StateKey, Set<Integer>> visited = new GameCache<StateKey, Set<Integer>>(1_000_000) {
 		@Override
 		protected Set<Integer> defaultValue() {
 			return new HashSet<>();
 		}
 	};
 
-	public Lookahead(Heuristic<?> heuristic, Lookahead lookahead) {
-		this(heuristic, .5, lookahead);
+	public Lookahead(Heuristic<?> heuristic, Lookahead lookahead, PlayerRunControl control) {
+		this(heuristic, .5, lookahead, control);
 	}
 
-	public Lookahead(Heuristic<?> heuristic, double randomness, Lookahead lookahead) {
-		super(heuristic);
+	public Lookahead(Heuristic<?> heuristic, double randomness, Lookahead lookahead, PlayerRunControl control) {
+		super(control, heuristic);
 		this.lookahead = lookahead;
 		this.randomness = randomness;
 		setMoveSource(new MonteCarloMoveSource());

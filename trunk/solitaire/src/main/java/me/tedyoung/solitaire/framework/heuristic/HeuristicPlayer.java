@@ -5,19 +5,21 @@ import java.util.List;
 import me.tedyoung.solitaire.framework.AbstractScoringPlayer;
 import me.tedyoung.solitaire.game.Game;
 import me.tedyoung.solitaire.game.move.Move;
+import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
 public class HeuristicPlayer extends AbstractScoringPlayer {
 	protected final Heuristic<?> heuristic;
-	
+
 	protected String name;
 
-	public HeuristicPlayer(String name, Heuristic<?> heuristic) {
+	public HeuristicPlayer(String name, PlayerRunControl runControl, Heuristic<?> heuristic) {
 		this.heuristic = heuristic;
 		this.name = name;
+		setRunControl(runControl);
 	}
 
-	public HeuristicPlayer(Heuristic<?> heuristic) {
-		this("", heuristic);
+	public HeuristicPlayer(PlayerRunControl runControl, Heuristic<?> heuristic) {
+		this("", runControl, heuristic);
 	}
 
 	@Override
@@ -29,6 +31,7 @@ public class HeuristicPlayer extends AbstractScoringPlayer {
 		return heuristic;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -37,7 +40,5 @@ public class HeuristicPlayer extends AbstractScoringPlayer {
 	public String toString() {
 		return name + "-" + heuristic;
 	}
-
-	
 
 }

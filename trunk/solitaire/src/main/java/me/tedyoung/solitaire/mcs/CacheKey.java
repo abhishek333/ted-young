@@ -1,16 +1,15 @@
 package me.tedyoung.solitaire.mcs;
 
-import me.tedyoung.solitaire.framework.heuristic.StateHeuristic;
 import me.tedyoung.solitaire.game.StateKey;
 
-public class CacheEntry {
+public class CacheKey {
 	private final StateKey state;
-	private final StateHeuristic heuristic;
+	private final Class<?> heuristic;
 	private final int level;
 
-	public CacheEntry(StateKey state, MonteCarloHeuristic heuristic, int level) {
+	public CacheKey(StateKey state, MonteCarloHeuristic heuristic, int level) {
 		this.state = state;
-		this.heuristic = heuristic;
+		this.heuristic = heuristic.getClass();
 		this.level = level;
 	}
 
@@ -32,12 +31,12 @@ public class CacheEntry {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CacheEntry other = (CacheEntry) obj;
+		CacheKey other = (CacheKey) obj;
 		if (heuristic == null) {
 			if (other.heuristic != null)
 				return false;
 		}
-		else if (!heuristic.equals(other.heuristic))
+		else if (heuristic != other.heuristic)
 			return false;
 		if (level != other.level)
 			return false;
@@ -49,4 +48,5 @@ public class CacheEntry {
 			return false;
 		return true;
 	}
+
 }

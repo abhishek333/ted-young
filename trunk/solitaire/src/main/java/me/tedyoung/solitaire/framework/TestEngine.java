@@ -51,7 +51,7 @@ public class TestEngine implements SwingProgressBar.Listener {
 
 			@Override
 			protected void terminated() {
-				// progressBar.stop();
+				progressBar.stop();
 
 				if (transcriber != null)
 					transcriber.stop();
