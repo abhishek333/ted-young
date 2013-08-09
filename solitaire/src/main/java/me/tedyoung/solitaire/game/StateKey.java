@@ -1,7 +1,12 @@
 package me.tedyoung.solitaire.game;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.ListIterator;
+
+import me.tedyoung.solitaire.utilities.CachingComparator;
 
 public class StateKey {
 	private byte[] bytes = new byte[52];
@@ -20,7 +25,9 @@ public class StateKey {
 
 		offset = 49;
 
-		for (MutableStack stack : game.getTable()) {
+		List<MutableStack> stacks = new ArrayList<>(game.getTable().getStacks());
+		Collections.sort(stacks, new StackComparator());
+		for (MutableStack stack : stacks) {
 			for (ListIterator<Card> iterator = stack.getVisibleCards().listIterator(); iterator.hasNext();)
 				bytes[iterator.next().ordinal()] = (byte) (offset + iterator.nextIndex() - 1);
 
@@ -52,6 +59,14 @@ public class StateKey {
 		if (!Arrays.equals(bytes, other.bytes))
 			return false;
 		return true;
+	}
+
+	private static class StackComparator extends CachingComparator<MutableStack> {
+		@Override
+		protected int valueOf(MutableStack stack) {
+			Card card = stack.getLastCard();
+			return card == null ? -stack.getIndex() : card.ordinal();
+		}
 	}
 
 }

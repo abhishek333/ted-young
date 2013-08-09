@@ -16,7 +16,6 @@ import me.tedyoung.solitaire.framework.heuristic.AdvancedMoveHeuristic;
 import me.tedyoung.solitaire.game.Game;
 import me.tedyoung.solitaire.game.MutableGame;
 import me.tedyoung.solitaire.game.move.Move;
-import me.tedyoung.solitaire.tester.DeadlockTester;
 import me.tedyoung.solitaire.utilities.GameCache;
 import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
@@ -25,10 +24,9 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 	protected Lookahead lookahead;
 	protected Tester tester;
 	protected boolean revised;
-	protected boolean chained;
 	protected List<MonteCarloHeuristic> heuristics = new ArrayList<>();
-	private GameCache<CacheEntry, Integer> longCache = new GameCache<CacheEntry, Integer>(1_000_000, Integer.MIN_VALUE);
-	private GameCache<CacheEntry, Integer> shortCache = new GameCache<CacheEntry, Integer>(1_000_000, Integer.MIN_VALUE);
+	private GameCache<CacheKey, Integer> longCache = new GameCache<CacheKey, Integer>(1_000_000, Integer.MIN_VALUE);
+	private GameCache<CacheKey, Integer> shortCache = new GameCache<CacheKey, Integer>(2_000_000, Integer.MIN_VALUE);
 
 	public MonteCarloSolver(Integer opening, Integer closing, PlayerRunControl control) {
 		this(opening, closing, control, false);
@@ -61,12 +59,12 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 		setMoveSource(source);
 
 		if (maximumHeuristicEvaluationDepth() == -1)
-			setLookahead(new Lookahead(new AdvancedMoveHeuristic(), null));
+			setLookahead(new Lookahead(new AdvancedMoveHeuristic(true), null, control));
 		else
-			setLookahead(new Lookahead(new ClosingHeuristic(-1), new Lookahead(new AdvancedMoveHeuristic(), null)));
+			setLookahead(new Lookahead(new ClosingHeuristic(-1), new Lookahead(new AdvancedMoveHeuristic(true), null, control), control));
 
-		if (totalHeuristicEvaluationDepth() > 3)
-			setTester(new DeadlockTester(control));
+		// if (totalHeuristicEvaluationDepth() > 3)
+		// setTester(new DeadlockTester(control));
 	}
 
 	private int maximumHeuristicEvaluationDepth() {
@@ -93,17 +91,14 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 			if (tester != null) {
 				that.tester = tester;
 				this.tester = null;
-				this.chained = true;
 			}
 		}
 	}
 
 	@Override
 	public void cleanup(Game game) {
-		if (!chained) {
-			longCache.clear(game);
-			shortCache.clear(game);
-		}
+		longCache.clear(game);
+		shortCache.clear(game);
 		if (tester != null)
 			tester.cleanup(game);
 		if (lookahead != null)
@@ -144,8 +139,8 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 
 	protected int score(MutableGame game, int heuristic, int depth) {
 		if (depth > -1) {
-			CacheEntry node = new CacheEntry(game.getStateKey(), heuristics.get(heuristic), depth);
-			GameCache<CacheEntry, Integer> cache = depth == 0 ? shortCache : longCache;
+			CacheKey node = new CacheKey(game.getStateKey(), heuristics.get(heuristic), depth);
+			GameCache<CacheKey, Integer> cache = depth == 0 ? shortCache : longCache;
 			Integer score = cache.get(game, node);
 			if (score > Integer.MIN_VALUE)
 				return score;

@@ -35,28 +35,6 @@ public abstract class MonteCarloHeuristic implements StateHeuristic {
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + evaluationDepth;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MonteCarloHeuristic other = (MonteCarloHeuristic) obj;
-		if (evaluationDepth != other.evaluationDepth)
-			return false;
-		return true;
-	}
-
-	@Override
 	public String toString() {
 		return name + "(" + evaluationDepth + ")";
 	}
