@@ -1,11 +1,11 @@
 package me.tedyoung.solitaire.utilities;
 
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 public abstract class CachingComparator<T> implements Comparator<T> {
-	private Map<T, Integer> cache = new HashMap<>();
+	private Map<T, Integer> cache = new IdentityHashMap<>();
 
 	@Override
 	public int compare(T one, T two) {

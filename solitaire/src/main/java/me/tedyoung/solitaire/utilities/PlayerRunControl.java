@@ -30,17 +30,6 @@ public class PlayerRunControl {
 		this.maximumMoves = maximumMoves;
 	}
 
-	public void verifyWihtoutYield(Game game) {
-		if (maximumTime > 0)
-			if (getElapsedTime(game) > maximumTime)
-				throw new Abort.Timeout();
-
-		if (maximumMoves > 0)
-			if (getNumberOfMoves(game) > maximumMoves)
-				throw new Abort.Distance();
-
-	}
-
 	public int getNumberOfMoves(Game game) {
 		return ((MutableGame) game).getNumberOfMovesPlayed();
 	}
@@ -50,7 +39,14 @@ public class PlayerRunControl {
 	}
 
 	public void verify(Game game) {
-		verifyWihtoutYield(game);
+		if (maximumTime > 0)
+			if (getElapsedTime(game) > maximumTime)
+				throw new Abort.Timeout();
+
+		if (maximumMoves > 0)
+			if (getNumberOfMoves(game) > maximumMoves)
+				throw new Abort.Distance();
+
 		runControl.verify();
 	}
 

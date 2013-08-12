@@ -1,6 +1,5 @@
 package me.tedyoung.solitaire.mcs;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import me.tedyoung.solitaire.game.Card;
@@ -23,12 +22,12 @@ public class ClosingHeuristic extends MonteCarloHeuristic {
 		int score = game.getFoundation().size() * 5;
 
 		for (MutableStack stack : game.getTable()) {
-			List<Card> cards = new ArrayList<>(stack.getHiddenCards());
+			List<Card> cards = stack.getHiddenCards();
 
 			for (Card card : cards)
 				score += card.getDenomination().getValue() - 13;
 
-			cards.addAll(0, stack.getVisibleCards());
+			cards = stack.getAllCards();
 
 			for (Card card : cards) {
 				for (Card blocked : cards.subList(cards.indexOf(card) + 1, cards.size())) {

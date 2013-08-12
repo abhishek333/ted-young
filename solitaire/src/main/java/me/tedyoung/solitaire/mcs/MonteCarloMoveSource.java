@@ -29,6 +29,10 @@ public class MonteCarloMoveSource extends BasicMoveSource {
 	protected boolean rejectMove(Move move, Game g) {
 		MutableGame game = (MutableGame) g;
 
+		// if (revised)
+		// if (game.getNumberOfMovesPlayed() > 0 && move.getCard() == game.getHistory().getPreviousMove().getCard())
+		// return true;
+
 		if (move instanceof StackToStackMove) {
 			MutableStack stack = game.getStack(((StackToStackMove) move).getSource());
 			if (move.getCard().equals(stack.getLastVisibleCard()))
@@ -45,11 +49,11 @@ public class MonteCarloMoveSource extends BasicMoveSource {
 		if (move instanceof FoundationToStackMove) {
 			if (move.getCard().getDenomination().getValue() <= 2)
 				return true;
+
 			for (Card foundation : game.getFoundation().getTopCards())
-				if (move.getCard().getDenomination().getValue() - foundation.getDenomination().getValue() > 3)
+				if (move.getCard().getDenomination().getValue() - foundation.getDenomination().getValue() > 2)
 					return false;
 			return true;
-
 		}
 
 		return false;

@@ -16,7 +16,6 @@ import me.tedyoung.solitaire.game.MutableGame;
 import me.tedyoung.solitaire.game.StateKey;
 import me.tedyoung.solitaire.game.move.Move;
 import me.tedyoung.solitaire.utilities.GameCache;
-import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
 public class Lookahead extends HeuristicPlayer {
 	private final Lookahead lookahead;
@@ -29,12 +28,16 @@ public class Lookahead extends HeuristicPlayer {
 		}
 	};
 
-	public Lookahead(Heuristic<?> heuristic, Lookahead lookahead, PlayerRunControl control) {
-		this(heuristic, .5, lookahead, control);
+	public Lookahead(Heuristic<?> heuristic) {
+		this(heuristic, .5, null);
 	}
 
-	public Lookahead(Heuristic<?> heuristic, double randomness, Lookahead lookahead, PlayerRunControl control) {
-		super(control, heuristic);
+	public Lookahead(Heuristic<?> heuristic, Lookahead lookahead) {
+		this(heuristic, .5, lookahead);
+	}
+
+	public Lookahead(Heuristic<?> heuristic, double randomness, Lookahead lookahead) {
+		super(heuristic);
 		this.lookahead = lookahead;
 		this.randomness = randomness;
 		setMoveSource(new MonteCarloMoveSource());
@@ -80,12 +83,12 @@ public class Lookahead extends HeuristicPlayer {
 		return moves;
 	}
 
-	@Override
-	public void setRunControl(PlayerRunControl control) {
-		super.setRunControl(control);
-		if (lookahead != null)
-			lookahead.setRunControl(control);
-	}
+	// @Override
+	// public void setRunControl(PlayerRunControl control) {
+	// super.setRunControl(control);
+	// if (lookahead != null)
+	// lookahead.setRunControl(control);
+	// }
 
 	@Override
 	public String getName() {

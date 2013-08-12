@@ -15,17 +15,13 @@ public class History {
 	}
 
 	public History(History history) {
-		addAll(history);
+		states.addAll(history.states);
+		moves.addAll(history.moves);
 	}
 
 	public void add(SavedState state, Move move) {
 		moves.addFirst(move);
 		states.addFirst(state);
-	}
-
-	public void addAll(History history) {
-		states.addAll(history.states);
-		moves.addAll(history.moves);
 	}
 
 	public SavedState remove() {
@@ -89,6 +85,10 @@ public class History {
 
 	public List<Move> getMoves() {
 		return Collections.unmodifiableList(moves);
+	}
+
+	public Move getPreviousMove() {
+		return moves.getFirst();
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import me.tedyoung.solitaire.framework.AbstractScoringPlayer;
 import me.tedyoung.solitaire.game.Game;
 import me.tedyoung.solitaire.game.move.Move;
+import me.tedyoung.solitaire.utilities.NoOpPlayerRunControl;
 import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
 public class HeuristicPlayer extends AbstractScoringPlayer {
@@ -20,6 +21,10 @@ public class HeuristicPlayer extends AbstractScoringPlayer {
 
 	public HeuristicPlayer(PlayerRunControl runControl, Heuristic<?> heuristic) {
 		this("", runControl, heuristic);
+	}
+
+	public HeuristicPlayer(Heuristic<?> heuristic) {
+		this("", new NoOpPlayerRunControl(), heuristic);
 	}
 
 	@Override
