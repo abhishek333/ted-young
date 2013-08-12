@@ -49,12 +49,12 @@ public class MutableDeck implements Deck, Serializable {
 		// if (!cards.isAnyVisible())
 		// dealNextHand();
 
-		return cards.getVisible().get(0);
+		return getVisibleCards().get(0);
 	}
 
 	@Override
 	public List<Card> getVisibleCards() {
-		return unmodifiableList(cards.getVisible());
+		return unmodifiableList(cards.getVisibleReversed());
 	}
 
 	public List<Card> getHiddenCards() {
@@ -67,7 +67,7 @@ public class MutableDeck implements Deck, Serializable {
 	}
 
 	public Card removeTopCard() {
-		return cards.remove(0);
+		return cards.remove(getVisibleCards().size() - 1);
 	}
 
 	public Card removeCard(Card card) {

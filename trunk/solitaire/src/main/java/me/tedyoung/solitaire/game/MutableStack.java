@@ -4,7 +4,6 @@ import static java.util.Collections.unmodifiableList;
 import static me.tedyoung.solitaire.game.Denomination.KING;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,14 +33,14 @@ public class MutableStack implements Stack, Serializable {
 
 	@Override
 	public boolean isPlayable(Card card) {
-		if (card.equals(Card.UNKNOWN))
+		if (card == Card.UNKNOWN)
 			return false;
 
 		if (isEmpty())
 			return card.getDenomination() == KING;
 
 		Card topCard = getTopCard();
-		if (topCard.equals(Card.UNKNOWN))
+		if (topCard == Card.UNKNOWN)
 			return false;
 
 		return topCard.isHolderOf(card);
@@ -56,7 +55,7 @@ public class MutableStack implements Stack, Serializable {
 		if (!isPlayable(cards.get(cards.size() - 1)))
 			throw new InvalidCardPlayedToStackException(this, cards.get(cards.size() - 1));
 
-		this.cards.add(0, true, cards);
+		this.cards.add(Pile.LAST, true, cards);
 	}
 
 	@Override
@@ -69,10 +68,7 @@ public class MutableStack implements Stack, Serializable {
 	}
 
 	public List<Card> getAllCards() {
-		List<Card> list = new ArrayList<>(size());
-		list.addAll(getVisibleCards());
-		list.addAll(getHiddenCards());
-		return unmodifiableList(list);
+		return unmodifiableList(cards.getAll());
 	}
 
 	public List<Card> removeCardsFrom(Card card) {
@@ -101,7 +97,10 @@ public class MutableStack implements Stack, Serializable {
 
 	@Override
 	public Card getLastVisibleCard() {
-		return cards.getVisible().get(cards.getVisible().size() - 1);
+		if (isEmpty())
+			return null;
+		List<Card> visibleCards = getVisibleCards();
+		return visibleCards.get(visibleCards.size() - 1);
 	}
 
 	public Card getLastCard() {

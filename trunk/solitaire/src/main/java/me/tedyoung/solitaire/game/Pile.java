@@ -42,7 +42,7 @@ public class Pile implements Serializable {
 
 	public void add(int index, boolean visible, List<Card> cards) {
 		if (visible) {
-			index += firstVisibleCardIndex;
+			// index += firstVisibleCardIndex;
 			if (index > getAll().size())
 				index = getAll().size();
 		}
@@ -54,7 +54,7 @@ public class Pile implements Serializable {
 
 		prepareForUpdate();
 
-		this.cards.addAll(index, cards);
+		this.cards.addAll(index, Lists.reverse(cards));
 
 		updateVisible();
 	}
@@ -120,8 +120,12 @@ public class Pile implements Serializable {
 		Collections.fill(getHidden(), Card.UNKNOWN);
 	}
 
+	public List<Card> getVisibleReversed() {
+		return cards.subList(firstVisibleCardIndex, cards.size());
+	}
+
 	public List<Card> getVisible() {
-		return cards.subList(firstVisibleCardIndex, getAll().size());
+		return Lists.reverse(cards.subList(firstVisibleCardIndex, cards.size()));
 	}
 
 	public List<Card> getHidden() {

@@ -1,10 +1,11 @@
 package me.tedyoung.solitaire.framework;
 
 import me.tedyoung.solitaire.game.Game;
+import me.tedyoung.solitaire.utilities.NoOpPlayerRunControl;
 import me.tedyoung.solitaire.utilities.PlayerRunControl;
 
 public abstract class AbstractPlayer implements Player {
-	private PlayerRunControl control = new PlayerRunControl();
+	private PlayerRunControl control = new NoOpPlayerRunControl();
 
 	protected void start(Game game) {
 		control.start(game);
