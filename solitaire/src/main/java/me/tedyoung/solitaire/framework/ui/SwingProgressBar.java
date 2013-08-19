@@ -33,7 +33,12 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 
 	private final JProgressBar bar;
 
-	private final JLabel complete = new JLabel("", JLabel.RIGHT), time = new JLabel("", JLabel.RIGHT), rate = new JLabel("", JLabel.RIGHT), last = new JLabel("", JLabel.RIGHT);
+	private final JLabel complete = new JLabel("", JLabel.RIGHT);
+	private final JLabel time = new JLabel("", JLabel.RIGHT);
+	private final JLabel rate = new JLabel("", JLabel.RIGHT);
+	private final JLabel last = new JLabel("", JLabel.RIGHT);
+	private final JLabel uptime = new JLabel("", JLabel.RIGHT);
+	private final JLabel active = new JLabel("", JLabel.RIGHT);
 
 	private final JButton pause = new JButton("Pause"), summary = new JButton("Summarize");
 	private boolean paused = false;
@@ -75,10 +80,12 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 		JLabel timeLabel = new JLabel("Time Remaining:");
 		JLabel rateLabel = new JLabel("Average Rate:");
 		JLabel lastLabel = new JLabel("Last Test:");
+		JLabel uptimeLabel = new JLabel("Uptime:");
+		JLabel activeLabel = new JLabel("Scheduled/Active:");
 
 		GroupLayout.SequentialGroup horizontal = layout.createSequentialGroup();
-		horizontal.addGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(completeLabel).addComponent(timeLabel).addComponent(rateLabel).addComponent(lastLabel));
-		horizontal.addGroup(layout.createParallelGroup(Alignment.TRAILING).addComponent(complete, 200, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE).addComponent(time).addComponent(rate).addComponent(last));
+		horizontal.addGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(completeLabel).addComponent(uptimeLabel).addComponent(timeLabel).addComponent(rateLabel).addComponent(lastLabel).addComponent(activeLabel));
+		horizontal.addGroup(layout.createParallelGroup(Alignment.TRAILING).addComponent(complete, 200, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE).addComponent(uptime).addComponent(time).addComponent(rate).addComponent(last).addComponent(active));
 		layout.setHorizontalGroup(horizontal);
 
 		GroupLayout.SequentialGroup vertical = layout.createSequentialGroup();
@@ -86,6 +93,8 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 		vertical.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(rateLabel).addComponent(rate));
 		vertical.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(timeLabel).addComponent(time));
 		vertical.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(lastLabel).addComponent(last));
+		vertical.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(uptimeLabel).addComponent(uptime));
+		vertical.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(activeLabel).addComponent(active));
 		layout.setVerticalGroup(vertical);
 
 		constraints.gridy = 3;
@@ -94,8 +103,8 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 		pane = new JPanel();
 		add(pane, constraints);
 
-		pane.add(pause);
 		pane.add(summary);
+		pane.add(pause);
 		pause.addActionListener(this);
 		summary.addActionListener(this);
 
@@ -154,8 +163,9 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 		});
 	}
 
-	public void setValue(final int progress) {
-		final double average = stopwatch.elapsed(TimeUnit.MILLISECONDS) / (double) progress;
+	public void setValue(final long progress, final long scheduled, final long queued) {
+		final long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+		final double average = elapsed / (double) progress;
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -163,9 +173,11 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 				rate.setText(String.format("%.3fs", average / 1000));
 				last.setText(String.format("%tT", new Date()));
 
-				bar.setValue(progress);
+				bar.setValue((int) progress);
 				int maximum = bar.getMaximum();
 				complete.setText(String.format("%,5d / %,d (%3.1f%%)", progress, maximum, 100 * progress / (double) maximum));
+				active.setText(String.format("%d / %d", scheduled, queued));
+				uptime.setText(formatter.print(new Period(elapsed)));
 
 				try {
 					time.setText(formatter.print(new Period((long) ((maximum - progress) * average))));

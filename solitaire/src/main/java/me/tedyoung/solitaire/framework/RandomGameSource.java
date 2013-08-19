@@ -1,5 +1,6 @@
 package me.tedyoung.solitaire.framework;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 import me.tedyoung.solitaire.game.Game;
@@ -11,13 +12,14 @@ public class RandomGameSource extends AbstractGameSource {
 	private int count;
 
 	public RandomGameSource(int size, int handSize) {
-		this(size, handSize, new Random().nextLong());
+		this(size, handSize, new SecureRandom().nextLong());
 	}
 
 	public RandomGameSource(int size, int handSize, long seed) {
 		super(size, handSize);
 		this.seed = seed;
-		this.random = new Random(seed);
+		this.random = new SecureRandom();
+		this.random.setSeed(seed);
 	}
 
 	@Override

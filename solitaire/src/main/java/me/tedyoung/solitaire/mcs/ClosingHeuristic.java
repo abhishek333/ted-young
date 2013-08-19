@@ -16,9 +16,6 @@ public class ClosingHeuristic extends MonteCarloHeuristic {
 	public int valueOf(Game g) {
 		MutableGame game = (MutableGame) g;
 
-		if (game.isComplete())
-			return WON;
-
 		int score = game.getFoundation().size() * 5;
 
 		for (MutableStack stack : game.getTable()) {
