@@ -1,12 +1,12 @@
 package me.tedyoung.solitaire.mcs;
 
 import static me.tedyoung.solitaire.mcs.MonteCarloHeuristic.LOST;
-import static me.tedyoung.solitaire.mcs.MonteCarloHeuristic.WON;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import me.tedyoung.solitaire.framework.Abort;
 import me.tedyoung.solitaire.framework.AbstractScoringPlayer;
 import me.tedyoung.solitaire.framework.ChainablePlayer;
 import me.tedyoung.solitaire.framework.GameResult;
@@ -73,13 +73,6 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 		return max;
 	}
 
-	private int totalHeuristicEvaluationDepth() {
-		int sum = 0;
-		for (MonteCarloHeuristic heuristic : heuristics)
-			sum += heuristic.getEvaluationDepth();
-		return sum;
-	}
-
 	@Override
 	public void chainedTo(Player player) {
 		if (player instanceof MonteCarloSolver) {
@@ -136,13 +129,13 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 	}
 
 	protected int scoreImpl(MutableGame game, int heuristic, int depth) {
+		if (game.isComplete())
+			throw new Abort.Complete();
+
 		int value = heuristics.get(heuristic).valueOf(game);
 
 		if (depth == -1)
 			return value;
-
-		if (game.isComplete())
-			return WON;
 
 		verify(game);
 
@@ -163,18 +156,12 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 			game.undo();
 		}
 
-		if (score == WON)
-			return WON;
+		if (value > score && heuristic < heuristics.size() - 1)
+			return score(game, heuristic + 1, heuristics.get(heuristic + 1).getEvaluationDepth());
 
-		if (value > score && heuristic < heuristics.size() - 1) {
-			score = score(game, heuristic + 1, heuristics.get(heuristic + 1).getEvaluationDepth());
-		}
-		else {
-			game.play(best);
-			score = score(game, heuristic, depth);
-			game.undo();
-		}
-
+		game.play(best);
+		score = score(game, heuristic, depth);
+		game.undo();
 		return score;
 	}
 

@@ -10,6 +10,7 @@ import me.tedyoung.solitaire.game.StateKey;
 import me.tedyoung.solitaire.utilities.GameCache;
 
 public class Cache {
+	@SuppressWarnings("unused")
 	private boolean revised;
 	private GameCache<Key, Integer> longCache = new GameCache<>(1_000_000, Integer.MIN_VALUE);
 	private GameCache<Key, Integer> shortCache = new GameCache<>(2_000_000, Integer.MIN_VALUE);

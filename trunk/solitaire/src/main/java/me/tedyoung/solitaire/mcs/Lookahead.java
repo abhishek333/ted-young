@@ -56,7 +56,7 @@ public class Lookahead extends HeuristicPlayer {
 		int mark = game.mark();
 		GameResult result = super.playGame(game);
 		if (result == GameResult.WON)
-			throw new Abort();
+			throw new Abort.Complete();
 		game.restore(mark);
 		return result;
 	}
@@ -82,13 +82,6 @@ public class Lookahead extends HeuristicPlayer {
 
 		return moves;
 	}
-
-	// @Override
-	// public void setRunControl(PlayerRunControl control) {
-	// super.setRunControl(control);
-	// if (lookahead != null)
-	// lookahead.setRunControl(control);
-	// }
 
 	@Override
 	public String getName() {

@@ -16,9 +16,6 @@ public class OpeningHeuristic extends MonteCarloHeuristic {
 	public int valueOf(Game g) {
 		MutableGame game = (MutableGame) g;
 
-		if (game.isComplete())
-			return WON;
-
 		int score = 0;
 
 		for (Card card : game.getFoundation().getCards())

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import me.tedyoung.solitaire.framework.ui.SwingProgressBar;
 import me.tedyoung.solitaire.game.MutableGame;
@@ -17,7 +16,6 @@ public class TestEngine implements SwingProgressBar.Listener {
 	private final PausableThreadPoolExecutor executor;
 	private final Semaphore throttle;
 	private final ConcurrentHashMap<Test, TestFactory> sources = new ConcurrentHashMap<>();
-	private final AtomicInteger progress = new AtomicInteger(0);
 	private final SwingProgressBar progressBar;
 
 	private Transcriber transcriber;
@@ -29,13 +27,14 @@ public class TestEngine implements SwingProgressBar.Listener {
 	public TestEngine(int threads) {
 		progressBar = new SwingProgressBar(this);
 
-		throttle = new Semaphore(threads * 10);
+		final int totalPermits = threads * 10;
+		throttle = new Semaphore(totalPermits);
 		executor = new PausableThreadPoolExecutor(threads) {
 			@Override
 			protected void afterExecute(Runnable runnable, Throwable t) {
 				throttle.release();
 
-				progressBar.setValue(progress.addAndGet(1));
+				progressBar.setValue(getCompletedTaskCount() + 1, totalPermits - throttle.availablePermits(), getActiveCount());
 
 				Test test = (Test) runnable;
 				TestFactory factory = sources.remove(test);
