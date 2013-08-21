@@ -182,18 +182,18 @@ public class MonteCarloSolver extends AbstractScoringPlayer implements Chainable
 
 	public void setTester(Tester tester) {
 		this.tester = tester;
-		// if (this.tester != null)
-		// this.tester.setRunControl(getRunControl());
+		if (this.tester != null)
+			this.tester.setRunControl(getRunControl());
 	}
 
-	// @Override
-	// public void setRunControl(PlayerRunControl control) {
-	// super.setRunControl(control);
-	// if (this.lookahead != null)
-	// this.lookahead.setRunControl(control);
-	// if (this.tester != null)
-	// this.tester.setRunControl(control);
-	// }
+	@Override
+	public void setRunControl(PlayerRunControl control) {
+		super.setRunControl(control);
+		// if (this.lookahead != null)
+		// this.lookahead.setRunControl(control);
+		if (this.tester != null)
+			this.tester.setRunControl(control);
+	}
 
 	public void setHeuristics(List<MonteCarloHeuristic> heuristics) {
 		this.heuristics = heuristics;

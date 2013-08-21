@@ -19,6 +19,8 @@ public class PlayerRunControl {
 		}
 	};
 
+	private final GameLocal<Boolean> abort = new GameLocal<Boolean>(false);
+
 	private final long maximumMoves;
 
 	public PlayerRunControl() {
@@ -47,6 +49,9 @@ public class PlayerRunControl {
 			if (getNumberOfMoves(game) > maximumMoves)
 				throw new Abort.Distance();
 
+		if (abort.get(game))
+			throw new Abort.User();
+
 		runControl.verify();
 	}
 
@@ -74,6 +79,10 @@ public class PlayerRunControl {
 		Stopwatch watch = stopwatch.get(game);
 		if (!watch.isRunning())
 			watch.start();
+	}
+
+	public void abort(Game game) {
+		abort.set(game, true);
 	}
 
 	public boolean isPaused(Game game) {

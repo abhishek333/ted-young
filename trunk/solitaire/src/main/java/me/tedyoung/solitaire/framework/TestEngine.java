@@ -34,7 +34,7 @@ public class TestEngine implements SwingProgressBar.Listener {
 			protected void afterExecute(Runnable runnable, Throwable t) {
 				throttle.release();
 
-				progressBar.setValue(getCompletedTaskCount() + 1, totalPermits - throttle.availablePermits(), getActiveCount());
+				progressBar.setValue(getCompletedTaskCount() + 1, totalPermits - throttle.availablePermits() + 1, getActiveCount());
 
 				Test test = (Test) runnable;
 				TestFactory factory = sources.remove(test);
