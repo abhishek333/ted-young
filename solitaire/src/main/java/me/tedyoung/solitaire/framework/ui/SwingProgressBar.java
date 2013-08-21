@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -45,6 +46,17 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 
 	private Stopwatch stopwatch = new Stopwatch();
 	private static final PeriodFormatter formatter = new PeriodFormatterBuilder().appendHours().appendSuffix("h ").appendMinutes().appendSuffix("m ").appendSeconds().appendSuffix("s").toFormatter();
+
+	private long progress = 0;
+	private long scheduled = 0;
+	private long queued = 0;
+	private Date date = null;
+	private Timer timer = new Timer(1000, new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			updateDisplay();
+		}
+	});
 
 	public SwingProgressBar(Listener listener) {
 		super("Progress...");
@@ -139,6 +151,7 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 			@Override
 			public void run() {
 				setVisible(true);
+				timer.start();
 			}
 		});
 	}
@@ -149,6 +162,7 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 			@Override
 			public void run() {
 				setVisible(false);
+				timer.stop();
 				dispose();
 			}
 		});
@@ -163,29 +177,43 @@ public class SwingProgressBar extends JFrame implements ActionListener {
 		});
 	}
 
-	public void setValue(final long progress, final long scheduled, final long queued) {
-		final long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-		final double average = elapsed / (double) progress;
+	public synchronized void setValue(final long progress, final long scheduled, final long queued) {
+		this.progress = progress;
+		this.scheduled = scheduled;
+		this.queued = queued;
+		this.date = new Date();
+	}
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				rate.setText(String.format("%.3fs", average / 1000));
-				last.setText(String.format("%tT", new Date()));
+	private void updateDisplay() {
+		long progress = 0;
+		long scheduled = 0;
+		long queued = 0;
+		Date date = null;
 
-				bar.setValue((int) progress);
-				int maximum = bar.getMaximum();
-				complete.setText(String.format("%,5d / %,d (%3.1f%%)", progress, maximum, 100 * progress / (double) maximum));
-				active.setText(String.format("%d / %d", scheduled, queued));
-				uptime.setText(formatter.print(new Period(elapsed)));
+		synchronized (this) {
+			progress = this.progress;
+			scheduled = this.scheduled;
+			queued = this.queued;
+			date = this.date;
+		}
 
-				try {
-					time.setText(formatter.print(new Period((long) ((maximum - progress) * average))));
-				}
-				catch (ArithmeticException e) {
-				}
-			}
-		});
+		long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+		double average = elapsed / (double) progress;
+
+		rate.setText(String.format("%.3fs", average / 1000));
+		last.setText(String.format("%tT", date));
+
+		bar.setValue((int) progress);
+		int maximum = bar.getMaximum();
+		complete.setText(String.format("%,5d / %,d (%3.1f%%)", progress, maximum, 100 * progress / (double) maximum));
+		active.setText(String.format("%d / %d", scheduled, queued));
+		uptime.setText(formatter.print(new Period(elapsed)));
+
+		// try {
+		time.setText(formatter.print(new Period((long) ((maximum - progress) * average))));
+		// }
+		// catch (ArithmeticException e) {
+		// }
 	}
 
 	public static interface Listener {
